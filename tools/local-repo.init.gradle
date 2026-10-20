@@ -1,0 +1,13 @@
+// Local-only init script: use the pre-downloaded file:// Maven repo.
+// Used for building in sandboxes without Maven Central access.
+// NOT committed; CI builds use the normal online repositories.
+allprojects {
+    buildscript {
+        repositories {
+            maven { url = uri("file:///home/hatch/m2repo") }
+        }
+    }
+    repositories {
+        maven { url = uri("file:///home/hatch/m2repo") }
+    }
+}
