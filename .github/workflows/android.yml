@@ -1,1 +1,60 @@
-# Android CI workflow
+name: Android build
+
+# Builds a signed release AAB. Run manually from the Actions tab.
+# Required GitHub Secrets (see README.md for where each comes from):
+#   ANDROID_KEYSTORE_B64       base64 of chessfruitfly-upload.keystore
+#   ANDROID_KEYSTORE_PASSWORD  keystore password
+#   ANDROID_KEY_ALIAS          key alias (chessfruitfly)
+#   ANDROID_KEY_PASSWORD       key password
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Sync web assets to native project
+        # Refresh www/index.html with the latest exported game build before running.
+        run: npx cap sync android
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Restore upload keystore
+        env:
+          KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_B64 }}
+        run: |
+          echo -n "$KEYSTORE_B64" | base64 --decode > "$RUNNER_TEMP/upload.keystore"
+          cat > android/keystore.properties <<EOF
+          storeFile=$RUNNER_TEMP/upload.keystore
+          storePassword=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          keyAlias=${{ secrets.ANDROID_KEY_ALIAS }}
+          keyPassword=${{ secrets.ANDROID_KEY_PASSWORD }}
+          EOF
+
+      - name: Build release AAB
+        run: |
+          cd android
+          ./gradlew bundleRelease --no-daemon
+
+      - name: Upload AAB
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release-aab
+          path: android/app/build/outputs/bundle/release/app-release.aab
