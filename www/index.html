@@ -1,0 +1,1051 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="color-scheme" content="light dark" />
+  <link rel="icon" href="data:," />
+  <title>Chess</title>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-DRRVKCW491" onerror="window.__gaLibError=1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-DRRVKCW491', {cookie_flags: 'SameSite=None;Secure', page_location: 'https://muse.ai/s/chess-wxl6874okirs'});
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;600;700&family=Fredoka:wght@600;700&display=swap');
+    :root{
+      color-scheme:light dark;
+      --ink:#17231c;--muted:#5c6d62;--paper:#f7f6ef;--panel:#fffef8;--line:#d8ddd5;
+      --lime:#b7dc4a;--lime-deep:#6d8e18;--peach:#ff9a62;--berry:#d9446d;
+      --dark-square:#4f7459;--light-square:#f1dfb7;--select:#ffd84d;--move:#f7f3cf;--danger:#c92f4f;--danger-soft:#ffe2e7;
+      --shadow:0 18px 55px rgba(31,55,38,.14);--piece-light:#fffdf0;--piece-dark:#18291e;
+    }
+    @media(prefers-color-scheme:dark){:root{
+      --ink:#f0f5eb;--muted:#aebbad;--paper:#101712;--panel:#18211a;--line:#314036;
+      --lime:#bee35a;--lime-deep:#9fc53d;--peach:#ff9e68;--berry:#ff6b91;
+      --dark-square:#355f45;--light-square:#cfc492;--select:#f0c948;--move:#c8c083;--danger:#ff5d7e;--danger-soft:#4b1f2a;
+      --shadow:0 22px 60px rgba(0,0,0,.3);--piece-light:#fffde8;--piece-dark:#101d14;
+    }}
+    *{box-sizing:border-box}[hidden]{display:none!important}html,body{min-height:100%;margin:0}body{font-family:'DM Sans',system-ui,sans-serif;background:var(--paper);color:var(--ink);overflow-x:hidden}
+    button,select{font:inherit;color:inherit}button{cursor:pointer}
+    .page{width:min(1120px,100%);margin:auto;padding:clamp(16px,3vw,36px);min-height:100vh;display:grid;align-content:center}
+    .auth-bar{display:flex;justify-content:flex-end;align-items:center;gap:9px;margin:0 0 12px;min-height:38px}.auth-user{font-size:13px;font-weight:800;max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.auth-button{min-height:38px;border:1px solid var(--line);border-radius:10px;background:var(--panel);padding:0 13px;font-size:12px;font-weight:800}.auth-button.primary{background:var(--ink);border-color:var(--ink);color:var(--paper)}.auth-button:hover{background:color-mix(in srgb,var(--ink) 7%,var(--panel))}.auth-button.primary:hover{background:color-mix(in srgb,var(--ink) 88%,var(--paper))}
+    .game{display:grid;grid-template-columns:minmax(0,690px) minmax(260px,330px);gap:clamp(18px,3vw,34px);align-items:start;justify-content:center}
+    .arena{min-width:0}.player-bar{min-height:76px;display:flex;align-items:center;gap:13px;padding:8px 4px}.player-bar.bottom{justify-content:space-between}
+    .identity{display:flex;align-items:center;gap:12px;min-width:0}.avatar{width:54px;height:54px;border-radius:17px;display:grid;place-items:center;flex:0 0 auto}
+    .you-avatar{background:var(--ink);color:var(--paper);font-family:'Fredoka';font-size:20px}.fly-avatar{background:var(--lime);position:relative;overflow:hidden}
+    .fly{position:relative;width:28px;height:34px;transform:rotate(-7deg)}.fly-body{position:absolute;left:9px;top:10px;width:14px;height:22px;border-radius:50% 50% 45% 45%;background:#713b25;border:2px solid #2d241a;z-index:2}
+    .fly-body:after{content:"";position:absolute;left:2px;right:2px;top:8px;height:3px;background:#ff9a3d;box-shadow:0 6px 0 #ff9a3d}
+    .wing{position:absolute;top:8px;width:15px;height:22px;border:2px solid #fff;background:rgba(255,255,255,.64)}.wing.a{left:0;border-radius:85% 30% 70% 30%;transform:rotate(26deg)}.wing.b{right:0;border-radius:30% 85% 30% 70%;transform:rotate(-26deg)}
+    .eye{position:absolute;top:7px;width:7px;height:7px;border-radius:50%;background:var(--berry);border:2px solid #2d241a;z-index:3}.eye.a{left:7px}.eye.b{right:5px}
+    .antenna{position:absolute;top:1px;width:8px;height:9px;border-top:2px solid #2d241a;z-index:1}.antenna.a{left:7px;border-radius:80% 0 0;transform:rotate(-23deg)}.antenna.b{right:5px;border-radius:0 80% 0 0;transform:rotate(23deg)}
+    .name{font-weight:800;font-size:16px;line-height:1.2}.role{color:var(--muted);font-size:13px;margin-top:4px}.think-dots{display:none;gap:3px;margin-left:6px;vertical-align:middle}.thinking .think-dots{display:inline-flex}.think-dots i{width:4px;height:4px;border-radius:50%;background:var(--lime-deep);animation:blink 1s infinite}.think-dots i:nth-child(2){animation-delay:.15s}.think-dots i:nth-child(3){animation-delay:.3s}@keyframes blink{50%{opacity:.2;transform:translateY(-2px)}}
+    .bubble{margin-left:auto;background:var(--panel);border:1px solid var(--line);border-radius:14px 14px 14px 4px;padding:9px 12px;max-width:210px;font-size:13px;font-weight:700;box-shadow:0 5px 15px rgba(31,55,38,.06)}
+    .board-wrap{position:relative;width:100%;aspect-ratio:1;border-radius:18px;overflow:hidden;box-shadow:var(--shadow);border:7px solid var(--ink);background:var(--ink)}
+    .board{display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(8,1fr);width:100%;height:100%;user-select:none;touch-action:manipulation}
+    .square{border:0;padding:0;position:relative;display:grid;place-items:center;border-radius:0;background:var(--light-square)}.square.dark{background:var(--dark-square)}
+    .square::before{content:"";position:absolute;inset:8%;border-radius:50%;transform:scale(.3);opacity:0;transition:.12s ease;background:rgba(22,43,27,.38)}
+    .square.legal::before{opacity:1}.square.capture::before{inset:5%;transform:scale(1);background:transparent;border:5px solid rgba(22,43,27,.35)}
+    .square.selected{background:var(--select)}.square.last{box-shadow:inset 0 0 0 999px rgba(255,216,77,.36)}.square.check{box-shadow:inset 0 0 0 999px rgba(201,47,79,.65)}.board-wrap.mate{border-color:var(--danger);box-shadow:0 0 0 4px color-mix(in srgb,var(--danger) 25%,transparent),var(--shadow)}
+    .piece{font-family:'Arial Unicode MS','Noto Sans Symbols 2','DejaVu Sans',serif;font-size:clamp(34px,8.2vw,67px);line-height:1;filter:drop-shadow(0 2px 1px rgba(0,0,0,.22));transform:translateY(-1px);pointer-events:none}.piece.white{color:var(--piece-light);-webkit-text-stroke:1.4px #1e3022}.piece.black{color:var(--piece-dark);-webkit-text-stroke:1px rgba(247,246,239,.32)}
+    .coord{position:absolute;font-size:10px;font-weight:800;opacity:.68;pointer-events:none}.rank{left:4px;top:3px}.file{right:4px;bottom:2px}.dark .coord{color:#eef4d8}.light .coord{color:#3c6948}
+    .side{background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:20px;box-shadow:0 10px 30px rgba(31,55,38,.07);min-height:520px;display:flex;flex-direction:column}
+    .status-label{font-family:'Fredoka';font-size:24px;line-height:1.15;margin:0}.status-copy{color:var(--muted);font-size:14px;line-height:1.45;margin:7px 0 18px}
+    .turn-pill{display:flex;align-items:center;gap:9px;background:color-mix(in srgb,var(--lime) 25%,var(--panel));border-radius:12px;padding:11px 12px;font-size:13px;font-weight:800;margin-bottom:14px}.turn-dot{width:9px;height:9px;border-radius:50%;background:var(--lime-deep);box-shadow:0 0 0 4px color-mix(in srgb,var(--lime) 35%,transparent)}.side.mate .status-label{color:var(--danger)}.side.mate .turn-pill{background:var(--danger-soft);color:var(--danger)}.side.mate .turn-dot{background:var(--danger);box-shadow:0 0 0 4px color-mix(in srgb,var(--danger) 22%,transparent)}
+    .moves-head{font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:800;border-bottom:1px solid var(--line);padding-bottom:10px}.moves{display:grid;grid-template-columns:32px 1fr 1fr;gap:0;align-content:start;overflow:auto;max-height:254px;margin:4px 0 18px}.move-cell{min-height:33px;display:flex;align-items:center;border-bottom:1px solid color-mix(in srgb,var(--line) 70%,transparent);font-size:13px;font-weight:700}.move-num{color:var(--muted);font-size:12px}.empty-moves{grid-column:1/-1;color:var(--muted);font-size:13px;padding:18px 0;line-height:1.4}
+    .controls{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:auto}.control{height:44px;border:1px solid var(--line);background:transparent;border-radius:11px;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;gap:7px}.control:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}.control.primary{background:var(--ink);color:var(--paper);border-color:var(--ink);grid-column:1/-1}.control svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.control:disabled{opacity:.48;cursor:not-allowed;background:color-mix(in srgb,var(--line) 45%,transparent)}
+    .choice-label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:800;margin:1px 0 6px}.side-choice,.mode-choice{display:flex;border:1px solid var(--line);border-radius:12px;padding:3px;margin-bottom:12px}.side-choice button,.mode-choice button{flex:1;border:0;background:transparent;border-radius:8px;padding:8px 4px;font-size:12px;font-weight:800}.side-choice button.active,.mode-choice button.active{background:var(--lime);color:#17231c}.side-choice.disabled{opacity:.5}.side-choice.disabled button{cursor:not-allowed}.world-note{display:none;margin:-5px 0 12px;padding:9px 10px;border-radius:9px;background:color-mix(in srgb,var(--peach) 17%,var(--panel));color:var(--muted);font-size:12px;line-height:1.35}.world-note.show{display:block}
+    .profile-strip{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:1px 0 12px;font-size:12px;color:var(--muted)}.profile-strip strong{color:var(--ink)}
+    .online-panel{display:none;margin:-2px 0 12px;padding:12px;background:color-mix(in srgb,var(--lime) 12%,var(--panel));border:1px solid var(--line);border-radius:14px}.online-panel.show{display:block}.online-panel label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:800;margin-bottom:5px}.online-alias{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px;padding:8px 10px;border-radius:9px;background:var(--panel);font-size:12px;color:var(--muted)}.online-alias strong{color:var(--ink);font-size:13px}.online-row{display:flex;gap:7px;margin-bottom:8px}.online-row:last-child{margin-bottom:0}.online-input{min-width:0;width:100%;height:40px;border:1px solid var(--line);border-radius:9px;padding:0 10px;background:var(--panel);color:var(--ink);font:inherit;font-size:13px;font-weight:700;text-transform:uppercase}.online-action{height:40px;border:0;border-radius:9px;padding:0 12px;background:var(--ink);color:var(--paper);font-size:12px;font-weight:800;white-space:nowrap}.online-action.secondary{background:transparent;color:var(--ink);border:1px solid var(--line)}.online-error{display:none;color:var(--danger);font-size:12px;line-height:1.35;margin-top:7px}.online-error.show{display:block}.room-view{display:none;text-align:center}.room-view.show{display:block}.room-code{font-family:'Fredoka';font-size:32px;letter-spacing:.16em;margin:2px 0 4px}.room-meta{font-size:12px;color:var(--muted);line-height:1.4;margin-bottom:9px}.presence{display:flex;align-items:center;justify-content:center;gap:7px;font-size:12px;font-weight:800;margin-bottom:9px}.presence-dot{width:8px;height:8px;border-radius:50%;background:var(--lime-deep)}.presence.offline .presence-dot{background:var(--danger)}.online-game-controls{display:none;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:10px}.online-game-controls.show{display:grid}.online-game-controls .control:first-child{color:var(--danger)}
+    .clue-area{margin:0 0 12px}
+    .clue-btn{width:100%}
+    .clue-note{font-size:12px;color:var(--muted);line-height:1.4;margin:7px 0 0}
+    .clue-text{font-size:13px;font-weight:700;line-height:1.4;margin:7px 0 0;color:var(--lime-deep)}
+    .square.clue{box-shadow:inset 0 0 0 4px var(--berry),inset 0 0 0 999px rgba(217,68,109,.16)}
+    .idle-backdrop{position:fixed;inset:0;background:rgba(7,14,9,.66);display:none;place-items:center;padding:20px;z-index:12}
+    .idle-backdrop.show{display:grid}
+    .idle-card{background:var(--panel);border-radius:20px;padding:22px;width:min(380px,100%);box-shadow:var(--shadow);text-align:center}
+    .idle-card h2{font-family:'Fredoka';margin:0 0 6px;font-size:22px}
+    .idle-card p{margin:0 0 18px;color:var(--muted);font-size:14px;line-height:1.45}
+    .idle-actions{display:flex;gap:9px}
+    .idle-actions button{flex:1;height:44px;border-radius:11px;font-weight:800;border:1px solid var(--line);background:transparent;color:inherit}
+    .idle-actions button.primary{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+    .analysis{display:none;border-top:1px solid var(--line);padding-top:14px;margin:0 0 16px}.analysis.show{display:block}.analysis h2{font-family:'Fredoka';font-size:19px;margin:0 0 5px}.analysis-grade{display:inline-flex;align-items:center;border-radius:999px;padding:5px 9px;background:color-mix(in srgb,var(--lime) 30%,var(--panel));font-size:12px;font-weight:800;margin-bottom:9px}.analysis-summary{font-size:13px;line-height:1.45;margin:0 0 10px;color:var(--muted)}.analysis-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px}.analysis-stat{background:color-mix(in srgb,var(--line) 32%,transparent);border-radius:9px;padding:8px 6px;text-align:center}.analysis-stat strong{display:block;font-size:16px}.analysis-stat span{font-size:10px;color:var(--muted)}.analysis h3{font-size:12px;margin:9px 0 3px}.analysis p{font-size:12px;line-height:1.4;color:var(--muted);margin:0}
+    .captured{font-size:19px;letter-spacing:-3px;color:var(--muted);min-height:22px;text-align:right;max-width:45%;overflow:hidden;white-space:nowrap}
+    .promo-backdrop,.auth-backdrop{position:fixed;inset:0;background:rgba(7,14,9,.66);display:none;place-items:center;padding:20px;z-index:10}.promo-backdrop.show,.auth-backdrop.show{display:grid}.promo-card,.auth-card{background:var(--panel);border-radius:20px;padding:22px;width:min(410px,100%);box-shadow:var(--shadow)}.promo-card{text-align:center}.promo-card h2,.auth-card h2{font-family:'Fredoka';margin:0 0 6px}.promo-card p,.auth-intro{margin:0 0 18px;color:var(--muted);font-size:14px;line-height:1.45}.promo-options{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.promo-options button{aspect-ratio:1;border:1px solid var(--line);background:transparent;border-radius:12px;font-size:38px}.promo-options button:hover{background:var(--lime)}
+    .auth-card{position:relative}.auth-close{position:absolute;right:13px;top:12px;width:38px;height:38px;border:0;border-radius:10px;background:transparent;font-size:24px;line-height:1}.auth-close:hover{background:color-mix(in srgb,var(--ink) 7%,transparent)}.auth-tabs{display:flex;border-bottom:1px solid var(--line);margin:18px 0 15px}.auth-tab{flex:1;border:0;border-bottom:3px solid transparent;background:transparent;padding:9px;font-size:13px;font-weight:800}.auth-tab.active{border-color:var(--lime-deep)}.auth-field{display:block;margin-bottom:12px}.auth-field span{display:block;font-size:12px;font-weight:800;margin-bottom:5px}.auth-field input{width:100%;height:44px;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--ink);padding:0 12px;font:inherit;font-size:14px}.auth-submit,.guest-action{width:100%;height:44px;border:0;border-radius:10px;background:var(--ink);color:var(--paper);font-weight:800}.guest-action{background:transparent;color:var(--ink);border:1px solid var(--line)}.auth-divider{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:11px;margin:14px 0}.auth-divider:before,.auth-divider:after{content:"";height:1px;background:var(--line);flex:1}.auth-error{display:none;color:var(--danger);background:var(--danger-soft);border-radius:9px;padding:9px 10px;font-size:12px;line-height:1.35;margin:0 0 12px}.auth-error.show{display:block}.auth-forgot-wrap{text-align:right;margin:-6px 0 10px}.auth-forgot{border:0;background:transparent;padding:2px 0;font-size:12px;font-weight:800;color:var(--lime-deep);text-decoration:underline}.auth-forgot:hover{color:var(--ink)}.auth-note{display:none;color:var(--lime-deep);background:color-mix(in srgb,var(--lime) 22%,var(--panel));border-radius:9px;padding:9px 10px;font-size:12px;line-height:1.35;margin:0 0 12px;font-weight:700}.auth-note.show{display:block}.auth-success{display:none;text-align:center;padding:4px 0 2px}.auth-success.show{display:block}.auth-success h3{font-family:'Fredoka';font-size:20px;margin:0 0 6px}.auth-success p{color:var(--muted);font-size:13px;line-height:1.45;margin:0 0 16px}.analysis-lock{padding:14px;border-radius:12px;background:color-mix(in srgb,var(--lime) 15%,var(--panel))}.analysis-lock h2{margin-bottom:6px}.analysis-lock p{font-size:13px;line-height:1.45;color:var(--muted);margin:0 0 12px}.analysis-actions{display:flex;gap:8px}.analysis-actions button{flex:1;height:39px;border:1px solid var(--line);border-radius:9px;background:var(--panel);font-weight:800;font-size:12px}.analysis-actions button:first-child{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+    .pw-wrap{position:relative}.pw-wrap input{padding-right:48px}.pw-toggle{position:absolute;right:5px;top:50%;transform:translateY(-50%);width:36px;height:36px;border:0;border-radius:9px;background:transparent;display:grid;place-items:center;color:var(--muted);padding:0}.pw-toggle:hover{background:color-mix(in srgb,var(--ink) 7%,transparent);color:var(--ink)}.pw-toggle svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.pw-slash{display:none}.pw-toggle[aria-pressed="true"] .pw-slash{display:block}
+    .phone-action{width:100%;height:44px;border-radius:10px;background:transparent;color:var(--ink);border:1px solid var(--line);font-weight:800;margin-top:10px}.phone-action:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}
+    .google-action{width:100%;height:44px;border-radius:10px;background:#fff;color:#1f1f1f;border:1px solid #dadce0;font-weight:800;margin-top:10px;display:flex;align-items:center;justify-content:center;gap:10px;font-size:14px}.google-action:hover{background:#f8f9fa}.google-action:disabled{opacity:.6;cursor:default}.google-action svg{flex:0 0 auto}
+    .phone-back{border:0;background:transparent;padding:2px 0;font-size:12px;font-weight:800;color:var(--lime-deep);text-decoration:underline;margin-bottom:12px}.phone-back:hover{color:var(--ink)}
+    .phone-row{display:flex;gap:8px}.phone-row input{height:44px;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--ink);padding:0 12px;font:inherit;font-size:14px}.phone-row #phoneCc{width:78px;flex:0 0 auto;text-align:center}.phone-row #phoneNumber{flex:1 1 0;min-width:0;width:auto}
+    #phoneCode{letter-spacing:.35em;font-weight:700}
+    .phone-hint{font-size:12px;color:var(--muted);line-height:1.4;margin:9px 0 0}
+    #phonePanel .auth-error,#phonePanel .auth-note{margin-top:12px}
+    #phoneResendBtn{margin-top:9px}
+    .resume-backdrop{position:fixed;inset:0;background:rgba(7,14,9,.66);display:none;place-items:center;padding:20px;z-index:12}.resume-backdrop.show{display:grid}.resume-card{background:var(--panel);border-radius:20px;padding:22px;width:min(380px,100%);box-shadow:var(--shadow);text-align:center}.resume-card h2{font-family:'Fredoka';margin:0 0 6px;font-size:22px}.resume-card p{margin:0 0 18px;color:var(--muted);font-size:14px;line-height:1.45}
+    .auth-user.member{cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px}
+    .dash-backdrop{position:fixed;inset:0;background:rgba(7,14,9,.66);display:none;place-items:start center;padding:18px;z-index:11;overflow:auto}.dash-backdrop.show{display:grid}
+    .dash-card{background:var(--panel);border-radius:20px;padding:22px;width:min(680px,100%);box-shadow:var(--shadow);position:relative}.dash-card h2{font-family:'Fredoka';margin:0 0 4px;font-size:24px}
+    .dash-sub{color:var(--muted);font-size:13px;margin:0 0 14px;line-height:1.45}
+    .dash-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(88px,1fr));gap:8px;margin-bottom:14px}.dash-stat{background:color-mix(in srgb,var(--line) 32%,transparent);border-radius:12px;padding:10px 6px;text-align:center}.dash-stat strong{display:block;font-size:20px}.dash-stat span{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;font-weight:800}
+    .dash-tier{display:flex;gap:12px;align-items:flex-start;background:color-mix(in srgb,var(--lime) 18%,var(--panel));border-radius:14px;padding:13px 14px;margin-bottom:6px}.dash-tier-badge{flex:0 0 auto;border-radius:999px;padding:5px 11px;background:var(--ink);color:var(--paper);font-size:12px;font-weight:800}.dash-tier p{margin:0;font-size:13px;line-height:1.45;color:var(--muted)}
+    .dash-section-title{font-family:'Fredoka';font-size:17px;margin:18px 0 8px}
+    .dash-chart{width:100%;height:auto;display:block}
+    .dash-empty{text-align:center;padding:22px 10px 8px}.dash-empty p{color:var(--muted);font-size:14px;line-height:1.5;margin:0 0 14px}
+    .dash-game{border:1px solid var(--line);border-radius:12px;margin-bottom:8px;overflow:hidden}
+    .dash-game-head{width:100%;display:flex;align-items:center;gap:9px;background:transparent;border:0;padding:11px 12px;text-align:left;font-size:13px;font-weight:700;flex-wrap:wrap}
+    .dash-game-head:hover{background:color-mix(in srgb,var(--ink) 5%,transparent)}
+    .dash-result{border-radius:999px;padding:3px 9px;font-size:11px;font-weight:800}.dash-result.win{background:color-mix(in srgb,var(--lime) 45%,var(--panel))}.dash-result.loss{background:var(--danger-soft);color:var(--danger)}.dash-result.draw{background:color-mix(in srgb,var(--line) 55%,transparent);color:var(--muted)}
+    .dash-game-meta{color:var(--muted);font-size:12px;font-weight:600}
+    .dash-chevron{margin-left:auto;color:var(--muted);font-size:12px}
+    .dash-game-detail{display:none;padding:2px 12px 13px;font-size:12px;color:var(--muted);line-height:1.5}.dash-game.open .dash-game-detail{display:block}.dash-game-detail p{margin:6px 0 0}.dash-game-detail strong{color:var(--ink)}
+    .dash-detail-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:8px 0 4px}.dash-detail-grid .dash-stat{padding:7px 4px}.dash-detail-grid .dash-stat strong{font-size:15px}
+    .friends-backdrop{position:fixed;inset:0;background:rgba(7,14,9,.66);display:none;place-items:start center;padding:18px;z-index:11;overflow:auto}.friends-backdrop.show{display:grid}
+    .friends-card{background:var(--panel);border-radius:20px;padding:22px;width:min(450px,100%);box-shadow:var(--shadow);position:relative}.friends-card h2{font-family:'Fredoka';margin:0 0 2px;font-size:24px}
+    .friends-sub{color:var(--muted);font-size:13px;margin:0;line-height:1.45}
+    .friends-section-title{font-family:'Fredoka';font-size:16px;margin:18px 0 8px}
+    .friend-code-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+    .friend-code{font-family:'Fredoka';font-size:32px;letter-spacing:.14em;line-height:1.1}
+    .friends-note{color:var(--muted);font-size:13px;line-height:1.45;margin:9px 0 0}
+    .friends-msg{display:none;font-size:13px;font-weight:700;line-height:1.4;margin-top:9px;color:var(--lime-deep)}.friends-msg.show{display:block}
+    .friends-offline{color:var(--danger);background:var(--danger-soft);border-radius:10px;padding:11px 12px;font-size:13px;font-weight:700;line-height:1.4;margin-top:14px}
+    .friend-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid color-mix(in srgb,var(--line) 70%,transparent)}.friend-row:last-child{border-bottom:0}
+    .friend-dot{width:10px;height:10px;border-radius:50%;flex:0 0 auto;background:#98a29a}.friend-dot.online{background:var(--lime-deep)}.friend-dot.in-game{background:#e39a1f}
+    .friend-name{font-weight:800;font-size:14px;flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .friend-status{font-size:12px;color:var(--muted);white-space:nowrap}
+    .friends-empty{color:var(--muted);font-size:13px;line-height:1.45;padding:8px 0}
+    .invite-backdrop{position:fixed;inset:0;background:rgba(7,14,9,.66);display:none;place-items:center;padding:20px;z-index:13}.invite-backdrop.show{display:grid}
+    .invite-card{background:var(--panel);border-radius:20px;padding:22px;width:min(380px,100%);box-shadow:var(--shadow);text-align:center}.invite-card h2{font-family:'Fredoka';margin:0 0 6px;font-size:22px}.invite-card p{margin:0 0 18px;color:var(--muted);font-size:14px;line-height:1.45}
+    @media(max-width:860px){.page{align-content:start}.game{grid-template-columns:minmax(0,660px)}.side{min-height:0}.moves{max-height:165px}.bubble{max-width:180px}.board-wrap{border-width:5px}}
+    @media(max-width:520px){.page{padding:10px 10px 24px}.auth-bar{margin-bottom:6px}.auth-user{max-width:140px}.player-bar{min-height:66px}.avatar{width:46px;height:46px;border-radius:14px}.bubble{max-width:145px;padding:7px 9px;font-size:11px}.board-wrap{border-radius:12px}.piece{font-size:clamp(33px,11vw,50px)}.coord{font-size:8px}.side{border-radius:16px;padding:16px}.status-label{font-size:21px}.captured{font-size:16px}.game{gap:13px}}
+    @media(prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;transition-duration:.001ms!important}}
+  </style>
+</head>
+<body>
+<main class="page">
+  <div class="auth-bar" id="authBar" aria-live="polite">
+    <span class="auth-user" id="authUser" hidden></span>
+    <button class="auth-button" id="profileBtn" hidden>My progress</button>
+    <button class="auth-button" id="friendsBtn">Friends</button>
+    <button class="auth-button" id="loginBtn">Log in</button>
+    <button class="auth-button primary" id="signupBtn">Sign up</button>
+    <button class="auth-button" id="logoutBtn" hidden>Log out</button>
+  </div>
+  <div class="game">
+    <section class="arena" aria-label="Chess board">
+      <div class="player-bar top" id="opponentBar">
+        <div class="identity">
+          <div class="avatar fly-avatar" aria-hidden="true"><div class="fly"><i class="antenna a"></i><i class="antenna b"></i><i class="wing a"></i><i class="wing b"></i><i class="fly-body"></i><i class="eye a"></i><i class="eye b"></i></div></div>
+          <div><div class="name"><span id="opponentName">FruityFly</span> <span class="think-dots"><i></i><i></i><i></i></span></div><div class="role" id="opponentRole">Adaptive tiny rival</div></div>
+        </div>
+        <div class="bubble" id="bubble">Your move. Make it juicy.</div>
+      </div>
+      <div class="board-wrap" id="boardWrap"><div class="board" id="board" role="grid" aria-label="Chess board"></div></div>
+      <div class="player-bar bottom">
+        <div class="identity"><div class="avatar you-avatar" id="youAvatar">YOU</div><div><div class="name" id="youName">You</div><div class="role" id="yourColor">Playing White</div></div></div>
+        <div class="captured" id="captured" aria-label="Captured pieces"></div>
+      </div>
+    </section>
+    <aside class="side">
+      <h1 class="status-label" id="statusTitle">Your turn</h1>
+      <p class="status-copy" id="statusCopy">Select a piece, then choose a highlighted square.</p>
+      <div class="turn-pill"><span class="turn-dot"></span><span id="turnText">White to move</span></div>
+      <div class="choice-label">Game mode</div>
+      <div class="mode-choice" aria-label="Choose game mode">
+        <button id="flyMode" class="active">FruityFly</button><button id="localMode">Two player</button><button id="worldMode">Play online</button>
+      </div>
+      <div class="online-panel" id="onlinePanel" aria-live="polite">
+        <div id="onlineLobby">
+          <div class="online-alias"><span>Your game name</span><strong id="onlineAlias">Guest-----</strong></div>
+          <div class="online-row"><button class="online-action" id="createRoomBtn">Create room</button><input class="online-input" id="roomCodeInput" maxlength="6" placeholder="ROOM CODE" aria-label="Six character room code" /><button class="online-action secondary" id="joinRoomBtn">Join</button></div>
+          <div class="online-error" id="onlineError" role="alert"></div>
+        </div>
+        <div class="room-view" id="roomView">
+          <label>Room code</label><div class="room-code" id="roomCodeText">------</div>
+          <div class="room-meta" id="roomMeta">Waiting for another player to join.</div>
+          <div class="presence" id="presence"><span class="presence-dot"></span><span id="presenceText">Connecting…</span></div>
+          <div class="online-row"><button class="online-action" id="copyCodeBtn">Copy room code</button><button class="online-action secondary" id="claimWinBtn" hidden>Claim win</button></div>
+        </div>
+      </div>
+      <div class="side-choice" id="sideChoice" aria-label="Choose your side">
+        <button id="playWhite" class="active">Play White</button><button id="playBlack">Play Black</button>
+      </div>
+      <div class="profile-strip" id="profileStrip"><span>Your live profile</span><strong id="profileText">Learning your style</strong></div>
+      <div class="analysis" id="analysis" aria-live="polite"></div>
+      <div class="moves-head">Move log</div>
+      <div class="moves" id="moves"><div class="empty-moves">No moves yet. Open with a center pawn or surprise the fly.</div></div>
+      <div class="online-game-controls" id="onlineGameControls">
+        <button class="control" id="resignBtn">Resign</button><button class="control" id="rematchBtn">Rematch</button>
+      </div>
+      <div class="clue-area">
+        <button class="control clue-btn" id="clueBtn"><svg viewBox="0 0 24 24"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.8.6 1.3 1.4 1.4 2.3h5.2c.1-.9.6-1.7 1.4-2.3A7 7 0 0 0 12 2z"/></svg>Get a clue</button>
+        <p class="clue-note" id="clueNote" hidden>You've reached the Advanced tier, no clues needed.</p>
+        <p class="clue-text" id="clueText" hidden></p>
+      </div>
+      <div class="controls">
+        <button class="control" id="undoBtn" aria-label="Undo last turn"><svg viewBox="0 0 24 24"><path d="M9 7 4 12l5 5"/><path d="M4 12h9a7 7 0 0 1 7 7"/></svg>Undo turn</button>
+        <button class="control" id="flipBtn" aria-label="Flip board"><svg viewBox="0 0 24 24"><path d="m7 7 3-3 3 3"/><path d="M10 4v12a4 4 0 0 0 4 4h3"/><path d="m17 17 3 3-3 3"/></svg>Flip board</button>
+        <button class="control primary" id="newBtn"><svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg>New game</button>
+      </div>
+    </aside>
+  </div>
+</main>
+<div class="auth-backdrop" id="authModal" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+  <div class="auth-card">
+    <button class="auth-close" id="authClose" aria-label="Close account dialog">×</button>
+    <h2 id="authTitle">Log in</h2>
+    <p class="auth-intro" id="authIntro">Sign in to unlock your detailed game analysis and skill rating.</p>
+    <div class="auth-tabs" id="authTabs" role="tablist" aria-label="Account options"><button class="auth-tab active" id="authLoginTab" role="tab">Log in</button><button class="auth-tab" id="authSignupTab" role="tab">Sign up</button></div>
+    <form id="authForm" novalidate>
+      <label class="auth-field"><span>Email</span><input id="authEmail" type="email" autocomplete="email" required /></label>
+      <label class="auth-field"><span>Password</span><div class="pw-wrap"><input id="authPassword" type="password" autocomplete="current-password" minlength="6" required /><button type="button" class="pw-toggle" data-pw="authPassword" aria-label="Show password" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/><line class="pw-slash" x1="4" y1="4" x2="20" y2="20"/></svg></button></div></label>
+      <div class="auth-forgot-wrap" id="forgotRow"><button type="button" class="auth-forgot" id="forgotPassword">Forgot password?</button></div>
+      <label class="auth-field" id="confirmField" hidden><span>Confirm password</span><div class="pw-wrap"><input id="authConfirm" type="password" autocomplete="new-password" minlength="6" /><button type="button" class="pw-toggle" data-pw="authConfirm" aria-label="Show password" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/><line class="pw-slash" x1="4" y1="4" x2="20" y2="20"/></svg></button></div></label>
+      <div class="auth-error" id="authError" role="alert"></div>
+      <div class="auth-note" id="authNote" role="status"></div>
+      <button class="auth-submit" id="authSubmit" type="submit">Log in</button>
+    </form>
+    <button class="google-action" id="googleBtn" type="button"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.73v2.27h2.91c1.7-1.57 2.69-3.88 2.69-6.64z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.91-2.27c-.8.54-1.84.86-3.05.86-2.34 0-4.33-1.58-5.04-3.72H.96v2.34A9 9 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.96 10.68A5.4 5.4 0 0 1 3.68 9c0-.58.1-1.15.28-1.68V4.98H.96A9 9 0 0 0 0 9c0 1.45.35 2.83.96 4.02l3-2.34z"/><path fill="#EA4335" d="M9 3.59c1.32 0 2.51.46 3.44 1.35l2.58-2.58A9 9 0 0 0 .96 4.98l3 2.34C4.67 5.17 6.66 3.59 9 3.59z"/></svg>Continue with Google</button>
+    <button class="phone-action" id="phoneBtn" type="button">Continue with phone number</button>
+    <div class="auth-success" id="authSuccess"><h3>You're registered!</h3><p id="authSuccessText"></p><button class="auth-submit" id="authSuccessBtn" type="button">Start playing</button></div>
+    <div class="auth-divider" id="authDivider">or play without an account</div>
+    <button class="guest-action" id="guestBtn">Continue as guest</button>
+    <div id="phonePanel" hidden>
+      <button type="button" class="phone-back" id="phoneBack">Back to email sign in</button>
+      <div id="phoneStep1">
+        <label class="auth-field"><span>Phone number</span><div class="phone-row"><input id="phoneCc" type="text" value="+1" inputmode="tel" autocomplete="tel-country-code" aria-label="Country code" /><input id="phoneNumber" type="tel" autocomplete="tel-national" placeholder="555 123 4567" aria-label="Phone number" /></div></label>
+        <button class="auth-submit" id="phoneSendBtn" type="button">Send code by text</button>
+        <p class="phone-hint">We will text you a 6 digit sign in code. Message and data rates may apply.</p>
+      </div>
+      <div id="phoneStep2" hidden>
+        <label class="auth-field"><span>6 digit code</span><input id="phoneCode" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="123456" /></label>
+        <button class="auth-submit" id="phoneVerifyBtn" type="button">Verify and sign in</button>
+        <button class="guest-action" id="phoneResendBtn" type="button">Send a new code</button>
+      </div>
+      <div class="auth-error" id="phoneError" role="alert"></div>
+      <div class="auth-note" id="phoneNote" role="status"></div>
+      <div id="recaptchaContainer"></div>
+    </div>
+  </div>
+</div>
+<div class="dash-backdrop" id="dashModal" role="dialog" aria-modal="true" aria-labelledby="dashTitle">
+  <div class="dash-card">
+    <button class="auth-close" id="dashClose" aria-label="Close profile dashboard">×</button>
+    <h2 id="dashTitle">Your chess journey</h2>
+    <p class="dash-sub" id="dashName"></p>
+    <div id="dashBody"><p class="dash-sub">Loading your games...</p></div>
+  </div>
+</div>
+<div class="friends-backdrop" id="friendsModal" role="dialog" aria-modal="true" aria-labelledby="friendsTitle">
+  <div class="friends-card">
+    <button class="auth-close" id="friendsClose" aria-label="Close friends panel">×</button>
+    <h2 id="friendsTitle">Friends</h2>
+    <p class="friends-sub">Add friends with their friend code, see who is online, and challenge them to a game.</p>
+    <div class="friends-offline" id="friendsOffline" hidden>Couldn't connect. Friends need a connection.</div>
+    <div id="friendsMain">
+      <h3 class="friends-section-title">Your friend code</h3>
+      <div class="friend-code-row"><span class="friend-code" id="friendCodeText">------</span><button class="auth-button" id="copyFriendCodeBtn" type="button">Copy</button></div>
+      <p class="friends-note">Share this code with friends outside the game so they can add you.</p>
+      <h3 class="friends-section-title">Add friend</h3>
+      <div class="online-row"><input class="online-input" id="addFriendInput" placeholder="Enter friend code" aria-label="Friend code" maxlength="9" autocomplete="off" /><button class="online-action" id="addFriendBtn" type="button">Add</button></div>
+      <div class="friends-msg" id="addFriendMsg" role="status"></div>
+      <h3 class="friends-section-title">Your friends</h3>
+      <div id="friendsList"><div class="friends-empty">No friends yet. Share your code to get started.</div></div>
+      <p class="friends-note">Friendships are one-way. They won't see you online unless they add you back.</p>
+    </div>
+  </div>
+</div>
+<div class="invite-backdrop" id="inviteModal" role="dialog" aria-modal="true" aria-labelledby="inviteTitle"><div class="invite-card"><h2 id="inviteTitle">Game challenge</h2><p id="inviteText"></p><div class="idle-actions"><button id="inviteDeclineBtn" type="button">Decline</button><button id="inviteAcceptBtn" type="button" class="primary">Accept</button></div></div></div>
+<div class="promo-backdrop" id="promo" role="dialog" aria-modal="true" aria-labelledby="promoTitle"><div class="promo-card"><h2 id="promoTitle">Choose a promotion</h2><p>Your pawn made it. Pick its new job.</p><div class="promo-options" id="promoOptions"></div></div></div>
+<div class="idle-backdrop" id="idleModal" role="dialog" aria-modal="true" aria-labelledby="idleTitle"><div class="idle-card"><h2 id="idleTitle">Do you still want to continue?</h2><p>No move has been made for 2 minutes. Choose Yes to keep playing, or No to resign this game.</p><div class="idle-actions"><button id="idleNoBtn" type="button">No</button><button id="idleYesBtn" type="button" class="primary">Yes</button></div></div></div>
+<div class="resume-backdrop" id="resumeModal" role="dialog" aria-modal="true" aria-labelledby="resumeTitle"><div class="resume-card"><h2 id="resumeTitle">Resume your last game?</h2><p id="resumeText"></p><div class="idle-actions"><button id="resumeDiscardBtn" type="button">Discard</button><button id="resumeBtn" type="button" class="primary">Resume game</button></div></div></div>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://sql-quest-fc51e.web.app/__/firebase/init.js"></script>
+<script>
+(function(){
+  'use strict';
+  var glyph={K:'♔',Q:'♕',R:'♖',B:'♗',N:'♘',P:'♙',k:'♚',q:'♛',r:'♜',b:'♝',n:'♞',p:'♟'};
+  var value={p:100,n:320,b:330,r:500,q:900,k:20000};
+  var boardEl=document.getElementById('board'),boardWrap=document.getElementById('boardWrap'),movesEl=document.getElementById('moves'),bubble=document.getElementById('bubble');
+  var sideEl=document.querySelector('.side'),statusTitle=document.getElementById('statusTitle'),statusCopy=document.getElementById('statusCopy'),turnText=document.getElementById('turnText');
+  var opponentBar=document.getElementById('opponentBar'),capturedEl=document.getElementById('captured'),promo=document.getElementById('promo'),promoOptions=document.getElementById('promoOptions');
+  var analysisEl=document.getElementById('analysis'),profileText=document.getElementById('profileText'),profileStrip=document.getElementById('profileStrip'),sideChoice=document.getElementById('sideChoice');
+  var undoBtn=document.getElementById('undoBtn'),flipBtn=document.getElementById('flipBtn');
+  var onlinePanel=document.getElementById('onlinePanel'),onlineLobby=document.getElementById('onlineLobby'),roomView=document.getElementById('roomView'),onlineError=document.getElementById('onlineError'),onlineGameControls=document.getElementById('onlineGameControls');
+  var roomCodeText=document.getElementById('roomCodeText'),roomMeta=document.getElementById('roomMeta'),presence=document.getElementById('presence'),presenceText=document.getElementById('presenceText'),claimWinBtn=document.getElementById('claimWinBtn');
+  var state,history=[],selected=null,legalForSelected=[],player='w',flipped=false,aiBusy=false,pendingPromo=null,gameOver=false,gameEndType='',gameResult='',mode='ai',gameVersion=0,stats,persistentProfile=null;
+  var db=null,auth=null,currentUser=null,authMode='login',roomCode='',roomRef=null,roomListener=null,presenceListener=null,onlineMoves=[],onlineRoom=null,onlineReady=false,onlineName=makeGuestName(),lastOpponentConnected=null;
+  var authModal=document.getElementById('authModal'),authTitle=document.getElementById('authTitle'),authIntro=document.getElementById('authIntro'),authForm=document.getElementById('authForm'),authError=document.getElementById('authError'),confirmField=document.getElementById('confirmField');
+  function gaMode(){return mode==='ai'?'fruityfly':mode==='local'?'two_player':'online'}
+  var GA_ID='G-DRRVKCW491',GA_PAGE='https://muse.ai/s/chess-wxl6874okirs';
+  var gaCid='';try{var gaCookieMatch=document.cookie.match(/(?:^|;\s*)_ga_fb=([^;]+)/);if(gaCookieMatch)gaCid=decodeURIComponent(gaCookieMatch[1])}catch(gaCookieError){}
+  if(!gaCid){gaCid=Math.floor(Math.random()*1000000000)+'.'+Math.floor(Date.now()/1000);try{document.cookie='_ga_fb='+encodeURIComponent(gaCid)+';path=/;max-age=63072000;SameSite=None;Secure'}catch(gaSetError){}}
+  var gaSid=Math.floor(Date.now()/1000),gaHitCount=0,gaQueue=[],gaDecided=false,gaDirect=false;
+  window.__gaTransport='pending';
+  function gaDirectHit(name,params){
+    gaHitCount++;
+    var q=['v=2','tid='+GA_ID,'cid='+encodeURIComponent(gaCid),'sid='+gaSid,'sct=1','dl='+encodeURIComponent(GA_PAGE),'dt=Chess','en='+encodeURIComponent(name),'_s='+gaHitCount];
+    if(name==='page_view')q.push('_fv=1','_ss=1','_ee=1');
+    if(params)for(var key in params){if(!Object.prototype.hasOwnProperty.call(params,key))continue;var val=params[key];if(typeof val==='number')q.push('epn.'+encodeURIComponent(key)+'='+val);else q.push('ep.'+encodeURIComponent(key)+'='+encodeURIComponent(val))}
+    var url='https://www.google-analytics.com/g/collect?'+q.join('&'),sent=false;
+    try{if(navigator.sendBeacon)sent=navigator.sendBeacon(url)}catch(beaconError){}
+    if(!sent){try{var pendingFetch=window.fetch(url,{method:'POST',mode:'no-cors',keepalive:true});if(pendingFetch&&pendingFetch.catch)pendingFetch.catch(function(){})}catch(fetchError){try{new Image().src=url}catch(imageError){}}}
+  }
+  function gaDecide(){
+    if(gaDecided)return;gaDecided=true;
+    gaDirect=!!window.__gaLibError||!window.google_tag_data;
+    window.__gaTransport=gaDirect?'direct':'gtag';
+    var queued=gaQueue;gaQueue=[];
+    if(gaDirect){gaDirectHit('page_view');for(var i=0;i<queued.length;i++)gaDirectHit(queued[i][0],queued[i][1])}
+    else if(typeof window.gtag==='function'){for(var j=0;j<queued.length;j++)window.gtag('event',queued[j][0],queued[j][1])}
+  }
+  window.setTimeout(gaDecide,3500);
+  function track(name,params){
+    params=params||{};
+    try{
+      if(!gaDecided){gaQueue.push([name,params]);return}
+      if(gaDirect)gaDirectHit(name,params);
+      else if(typeof window.gtag==='function')window.gtag('event',name,params);
+    }catch(trackError){}
+  }
+  var completionTracked=false,analysisTracked=false,onlineStartedTracked=false,historySaved=false;
+  var clueMove=null,currentTier=null,idleTimer=null,idleOpen=false,resignLoser=null;
+  function trackGameCompleted(){if(completionTracked)return;completionTracked=true;track('game_completed',{mode:gaMode(),result:stats[player].result,move_count:history.length})}
+  function makeGuestName(){var chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789',suffix='';for(var i=0;i<4;i++)suffix+=chars[Math.floor(Math.random()*chars.length)];return 'Guest-'+suffix}
+  document.getElementById('onlineAlias').textContent=onlineName;
+  if(window.firebase&&firebase.apps&&firebase.apps.length){
+    try{auth=firebase.auth()}catch(authInitError){auth=null}
+    try{db=firebase.app().database('https://sql-quest-fc51e-default-rtdb.firebaseio.com')}catch(databaseInitError){db=null}
+  }
+  var quips={start:['Your move. Make it juicy.','I have six legs and a plan.','Try not to wing it.'],think:['Calculating with my tiny brain…','One buzz, many possibilities.','Hold on, human.'],capture:['A tasty little snack.','That piece was ripe.','Buzzed right past you.'],check:['Check! Did you feel that?','Your king looks nervous.','Tiny fly. Big threat.'],hurt:['Hey! I was using that.','Bold. Very bold.','That one had potential.'],win:['Checkmate. Fruit flies remember.'],lose:['You squashed me fair and square.'],draw:['A draw? We both live to buzz again.']};
+  function say(type){if(mode!=='ai')return;var a=quips[type]||quips.start;bubble.textContent=a[Math.floor(Math.random()*a.length)];}
+  function freshStats(){return {w:{moves:0,captures:0,checks:0,castled:0,promotions:0,center:0,development:0,good:0,inaccuracies:0,blunders:0,material:0,result:'draw'},b:{moves:0,captures:0,checks:0,castled:0,promotions:0,center:0,development:0,good:0,inaccuracies:0,blunders:0,material:0,result:'draw'}}}
+  function isMember(){return !!(currentUser&&!currentUser.isAnonymous)}
+  var clueBtn=document.getElementById('clueBtn'),clueNote=document.getElementById('clueNote'),clueText=document.getElementById('clueText'),idleModal=document.getElementById('idleModal');
+  function cluesUnlocked(){return !(isMember()&&currentTier==='Advanced')}
+  function updateClueUI(){if(!clueBtn)return;var ok=cluesUnlocked();clueBtn.disabled=!ok;clueNote.hidden=ok;if(!ok){var hadClue=!!clueMove;clueMove=null;clueText.hidden=true;if(hadClue&&state)render()}}
+  function refreshClueAccess(){
+    if(!isMember()||!db||!currentUser){currentTier=null;updateClueUI();return}
+    db.ref('chessUsers/'+currentUser.uid+'/games').once('value').then(function(snapshot){
+      var raw=snapshot.val(),latest=null;
+      if(raw)Object.keys(raw).forEach(function(k){var g=raw[k];if(g&&(!latest||(g.timestamp||0)>(latest.timestamp||0)))latest=g});
+      currentTier=latest?latest.tier:null;updateClueUI();
+    }).catch(function(){updateClueUI()});
+  }
+  function showClueText(message){clueText.textContent=message;clueText.hidden=false}
+  function bestClueMove(){
+    var mover=state.turn,ms=legal(state,mover),best=null,bestVal=-Infinity;
+    for(var i=0;i<ms.length;i++){var v=minimax(apply(state,ms[i]),1,-Infinity,Infinity,mover);if(v>bestVal){bestVal=v;best=ms[i]}}
+    return best;
+  }
+  var IDLE_MS=120000;
+  function humanTurnNow(){
+    if(gameOver||!state)return false;
+    if(mode==='ai')return state.turn===player&&!aiBusy;
+    if(mode==='local')return true;
+    if(mode==='online')return !!(onlineReady&&onlineRoom&&onlineRoom.status==='playing'&&state.turn===player);
+    return false;
+  }
+  function stopIdleTimer(){if(idleTimer){window.clearTimeout(idleTimer);idleTimer=null}}
+  function armIdleTimer(){
+    stopIdleTimer();if(idleOpen)return;if(!humanTurnNow())return;
+    idleTimer=window.setTimeout(idleFire,IDLE_MS);
+  }
+  function idleFire(){
+    idleTimer=null;if(idleOpen||!humanTurnNow())return;
+    if(dashModal.classList.contains('show')||authModal.classList.contains('show')||promo.classList.contains('show')){idleTimer=window.setTimeout(idleFire,10000);return}
+    idleOpen=true;idleModal.classList.add('show');
+  }
+  function hideIdlePopup(){idleOpen=false;idleModal.classList.remove('show')}
+  function idleResign(){
+    hideIdlePopup();stopIdleTimer();if(gameOver)return;
+    if(mode==='online'){
+      if(onlineRoom&&onlineRoom.status==='playing'){finishOnline((player==='w'?'Black':'White')+' wins by resignation');gameOver=true;setResults(other(player));trackGameCompleted();saveGameHistory()}
+      leaveOnline('ai');return;
+    }
+    var loser=mode==='local'?state.turn:player;resignLoser=loser;setResults(other(loser));gameOver=true;gameEndType='resign';gameResult=(other(loser)==='w'?'White':'Black')+' wins by resignation';trackGameCompleted();saveGameHistory();newGame('w','ai');
+  }
+  var SAVE_KEY='chessInProgressGameV1';
+  function clearSavedGame(){try{localStorage.removeItem(SAVE_KEY)}catch(clearError){}}
+  function persistGame(){
+    try{
+      if((mode==='ai'||mode==='local')&&!gameOver&&history.length){localStorage.setItem(SAVE_KEY,JSON.stringify({mode:mode,player:player,flipped:flipped,savedAt:Date.now(),history:history,state:state,stats:stats}))}
+      else clearSavedGame();
+    }catch(saveError){}
+  }
+  function readSavedGame(){
+    try{
+      var raw=localStorage.getItem(SAVE_KEY);if(!raw)return null;var data=JSON.parse(raw);
+      if(!data||(data.mode!=='ai'&&data.mode!=='local')||!data.state||!data.state.b||data.state.b.length!==64||!data.history||!data.history.length||!data.stats)return null;
+      return {raw:raw,data:data};
+    }catch(readError){return null}
+  }
+  var resumeModal=document.getElementById('resumeModal');
+  function showResumePrompt(data){
+    var moves=data.history.length,label=data.mode==='ai'?'against FruityFly':'a two player game';
+    var when=data.savedAt?new Date(data.savedAt).toLocaleString(undefined,{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):'';
+    document.getElementById('resumeText').textContent='You have an unfinished game, '+label+', with '+moves+(moves===1?' move':' moves')+' played'+(when?', saved '+when:'')+'. Pick up right where you left off, or discard it and start fresh.';
+    resumeModal.classList.add('show');
+    document.getElementById('resumeBtn').onclick=function(){resumeModal.classList.remove('show');resumeSavedGame(data)};
+    document.getElementById('resumeDiscardBtn').onclick=function(){resumeModal.classList.remove('show');clearSavedGame()};
+  }
+  function resumeSavedGame(data){
+    gameVersion++;mode=data.mode;player=data.player||'w';state=data.state;history=data.history;stats=data.stats;flipped=!!data.flipped;selected=null;legalForSelected=[];aiBusy=false;gameOver=false;gameEndType='';gameResult='';onlineMoves=[];resignLoser=null;completionTracked=false;analysisTracked=false;historySaved=false;clueMove=null;clueText.hidden=true;opponentBar.classList.remove('thinking');analysisEl.classList.remove('show');analysisEl.innerHTML='';sideEl.classList.remove('mate');boardWrap.classList.remove('mate');
+    document.getElementById('playWhite').classList.toggle('active',player==='w');document.getElementById('playBlack').classList.toggle('active',player==='b');document.getElementById('yourColor').textContent='Playing '+(player==='w'?'White':'Black');syncModeUI();say('start');render();refreshMyPresenceStatus();persistGame();armIdleTimer();
+    if(mode==='ai'&&state.turn!==player){var v=gameVersion;window.setTimeout(function(){if(v===gameVersion)aiTurn()},400)}
+  }
+  function gameInProgress(){return (mode==='ai'||mode==='local')&&history.length>0&&!gameOver}
+  window.addEventListener('beforeunload',function(e){if(!gameInProgress())return;if(dashModal.classList.contains('show')||authModal.classList.contains('show')||resumeModal.classList.contains('show'))return;e.preventDefault();e.returnValue=''});
+  function authMessage(error){var code=(error&&error.code)||'';var messages={'auth/email-already-in-use':'An account already uses that email. Try logging in instead.','auth/invalid-email':'Enter a valid email address.','auth/weak-password':'Use a password with at least 6 characters.','auth/invalid-credential':'That email and password were not accepted. Double check both and try again, or reset your password below.','auth/invalid-login-credentials':'That email and password were not accepted. Double check both and try again, or reset your password below.','auth/user-not-found':'No account uses that email. Check the address, or sign up first.','auth/wrong-password':'That password is incorrect. Tap the eye icon to check what you typed, or use Forgot password.','auth/user-disabled':'This account has been disabled. Please contact support for help.','auth/too-many-requests':'Too many attempts. Wait a moment, then try again.','auth/network-request-failed':'Could not connect. Check your connection and try again.','auth/popup-blocked':'Please allow popups for this site and try again.','auth/account-exists-with-different-credential':'An account already exists with this email using a different sign-in method. Please sign in with email and password instead.','auth/operation-not-allowed':'This sign-in option is not available yet.','auth/invalid-phone-number':'That phone number does not look right. Check the country code and the number, then try again.','auth/missing-phone-number':'Enter your phone number with its country code.','auth/quota-exceeded':'Text message sign in is busy right now. Please try again later, or sign in with email.','auth/invalid-verification-code':'That code is incorrect. Check the text message and try again.','auth/code-expired':'That code has expired. Send a new code and try again.','auth/session-expired':'That code has expired. Send a new code and try again.','auth/captcha-check-failed':'The security check for phone sign in could not run here. Please sign in with email instead, or open the game in a full browser tab and try phone sign in there.','auth/web-storage-unsupported':'Phone sign in needs browser storage for its security check, which this view blocks. Please sign in with email instead.'};return messages[code]||'Something went wrong. Please try again.'}
+  function showAuthError(message){authError.textContent=message||'';authError.classList.toggle('show',!!message)}
+  function showAuthNote(message){var note=document.getElementById('authNote');note.textContent=message||'';note.classList.toggle('show',!!message)}
+  function resetAuthView(){authForm.style.display='';document.getElementById('authTabs').style.display='';document.getElementById('authDivider').style.display='';document.getElementById('guestBtn').style.display='';document.getElementById('phoneBtn').style.display='';document.getElementById('googleBtn').style.display='';document.getElementById('phonePanel').hidden=true;document.getElementById('phoneStep1').hidden=false;document.getElementById('phoneStep2').hidden=true;showPhoneError('');showPhoneNote('');document.getElementById('authSuccess').classList.remove('show');showAuthNote('')}
+  function showRegistered(email){authForm.style.display='none';document.getElementById('authTabs').style.display='none';document.getElementById('authDivider').style.display='none';document.getElementById('guestBtn').style.display='none';document.getElementById('phoneBtn').style.display='none';document.getElementById('authSuccessText').textContent='We\'ve sent a verification email to '+email+'. Please check your inbox to confirm your address. You\'re already logged in, so you can start playing right away.';document.getElementById('googleBtn').style.display='none';document.getElementById('authSuccess').classList.add('show')}
+  function setAuthMode(next){authMode=next==='signup'?'signup':'login';var signup=authMode==='signup';resetAuthView();authTitle.textContent=signup?'Create your account':'Log in';authIntro.textContent=signup?'Create an account to unlock detailed game analysis and skill ratings.':'Sign in to unlock your detailed game analysis and skill rating.';document.getElementById('authLoginTab').classList.toggle('active',!signup);document.getElementById('authSignupTab').classList.toggle('active',signup);confirmField.hidden=!signup;document.getElementById('forgotRow').hidden=signup;document.getElementById('authConfirm').required=signup;document.getElementById('authPassword').autocomplete=signup?'new-password':'current-password';document.getElementById('authSubmit').textContent=signup?'Sign up':'Log in';showAuthError('')}
+  function openAuth(next){setAuthMode(next);authModal.classList.add('show');window.setTimeout(function(){document.getElementById('authEmail').focus()},0)}
+  function closeAuth(){authModal.classList.remove('show');showAuthError('');resetAuthView();authForm.reset();document.querySelectorAll('.pw-toggle').forEach(function(btn){var input=document.getElementById(btn.getAttribute('data-pw'));if(input)input.type='password';btn.setAttribute('aria-pressed','false');btn.setAttribute('aria-label','Show password')})}
+  function updateAuthUI(){var logged=!!currentUser;document.getElementById('authUser').hidden=!logged;document.getElementById('logoutBtn').hidden=!logged;document.getElementById('loginBtn').hidden=logged;document.getElementById('signupBtn').hidden=logged;document.getElementById('profileBtn').hidden=!isMember();var label=document.getElementById('authUser');label.classList.toggle('member',isMember());label.title=isMember()?'View your profile and progress':'';if(logged)label.textContent=currentUser.isAnonymous?'Playing as guest':'Member';if(gameOver)showAnalysis()}
+  function cloneStats(x){return {w:Object.assign({},x.w),b:Object.assign({},x.b)}}
+  function initial(){return {b:'rnbqkbnrpppppppp................................PPPPPPPPRNBQKBNR'.split(''),turn:'w',castle:{K:1,Q:1,k:1,q:1},ep:-1,half:0,last:null,captured:[]};}
+  function boardToFen(s){
+    var rows=[];for(var r=0;r<8;r++){var row='',empty=0;for(var c=0;c<8;c++){var p=s.b[ix(r,c)];if(p=='.')empty++;else{if(empty){row+=empty;empty=0}row+=p}}if(empty)row+=empty;rows.push(row)}
+    var rights=(s.castle.K?'K':'')+(s.castle.Q?'Q':'')+(s.castle.k?'k':'')+(s.castle.q?'q':'');
+    return rows.join('/')+' '+s.turn+' '+(rights||'-')+' '+(s.ep>=0?sqName(s.ep):'-')+' '+s.half+' '+(Math.floor(onlineMoves.length/2)+1);
+  }
+  function fenToState(fen){
+    try{var parts=String(fen||'').split(' '),ranks=parts[0].split('/'),b=[];if(ranks.length!==8)return null;ranks.forEach(function(rank){for(var i=0;i<rank.length;i++){var ch=rank[i],n=parseInt(ch,10);if(n){while(n--)b.push('.')}else b.push(ch)}});if(b.length!==64)return null;var rights=parts[2]||'-',ep=parts[3]&&parts[3]!=='-'?(8-parseInt(parts[3][1],10))*8+'abcdefgh'.indexOf(parts[3][0]):-1;return {b:b,turn:parts[1]==='b'?'b':'w',castle:{K:rights.indexOf('K')>=0?1:0,Q:rights.indexOf('Q')>=0?1:0,k:rights.indexOf('k')>=0?1:0,q:rights.indexOf('q')>=0?1:0},ep:ep,half:parseInt(parts[4],10)||0,last:null,captured:[]}}catch(e){return null}
+  }
+  function color(p){if(!p||p=='.')return null;return p===p.toUpperCase()?'w':'b'}
+  function other(c){return c==='w'?'b':'w'}
+  function rc(i){return [Math.floor(i/8),i%8]}
+  function ix(r,c){return r*8+c}
+  function inside(r,c){return r>=0&&r<8&&c>=0&&c<8}
+  function attacked(sq,by,s){
+    var q=rc(sq),r=q[0],c=q[1],b=s.b,dirs,i,nr,nc,p;
+    var pd=by==='w'?-1:1;
+    for(i=0;i<2;i++){nc=c+(i?1:-1);nr=r-pd;if(inside(nr,nc)&&b[ix(nr,nc)]===(by==='w'?'P':'p'))return true}
+    var kn=[[2,1],[2,-1],[-2,1],[-2,-1],[1,2],[1,-2],[-1,2],[-1,-2]];
+    for(i=0;i<kn.length;i++){nr=r+kn[i][0];nc=c+kn[i][1];if(inside(nr,nc)&&b[ix(nr,nc)]===(by==='w'?'N':'n'))return true}
+    dirs=[[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]];
+    for(i=0;i<dirs.length;i++){nr=r+dirs[i][0];nc=c+dirs[i][1];var step=1;while(inside(nr,nc)){p=b[ix(nr,nc)];if(p!='.'){if(color(p)===by){var t=p.toLowerCase();if(t==='q'||(i<4&&t==='r')||(i>=4&&t==='b')||(step===1&&t==='k'))return true}break}nr+=dirs[i][0];nc+=dirs[i][1];step++}}
+    return false;
+  }
+  function inCheck(c,s){var k=c==='w'?'K':'k',pos=s.b.indexOf(k);return pos>=0&&attacked(pos,other(c),s)}
+  function pseudo(s,c){
+    var out=[],b=s.b;
+    function add(from,to,special,promoPiece){var target=b[to];if(color(target)!==c)out.push({from:from,to:to,special:special||'',promo:promoPiece||'',captured:target})}
+    for(var from=0;from<64;from++){var p=b[from];if(color(p)!==c)continue;var z=rc(from),r=z[0],col=z[1],t=p.toLowerCase(),i,nr,nc,to;
+      if(t==='p'){
+        var d=c==='w'?-1:1,start=c==='w'?6:1,promRow=c==='w'?0:7;nr=r+d;
+        if(inside(nr,col)&&b[ix(nr,col)]=='.'){
+          to=ix(nr,col);if(nr===promRow){['q','r','b','n'].forEach(function(pp){add(from,to,'promo',pp)})}else add(from,to);
+          if(r===start&&b[ix(r+2*d,col)]=='.')add(from,ix(r+2*d,col),'double');
+        }
+        [-1,1].forEach(function(dc){nc=col+dc;nr=r+d;if(!inside(nr,nc))return;to=ix(nr,nc);if(color(b[to])===other(c)){if(nr===promRow)['q','r','b','n'].forEach(function(pp){add(from,to,'promo',pp)});else add(from,to)}else if(to===s.ep)add(from,to,'ep')});
+      } else if(t==='n'){
+        [[2,1],[2,-1],[-2,1],[-2,-1],[1,2],[1,-2],[-1,2],[-1,-2]].forEach(function(d){nr=r+d[0];nc=col+d[1];if(inside(nr,nc))add(from,ix(nr,nc))});
+      } else if(t==='b'||t==='r'||t==='q'){
+        var ds=t==='b'?[[1,1],[1,-1],[-1,1],[-1,-1]]:t==='r'?[[1,0],[-1,0],[0,1],[0,-1]]:[[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]];
+        ds.forEach(function(d){nr=r+d[0];nc=col+d[1];while(inside(nr,nc)){to=ix(nr,nc);if(b[to]=='.')add(from,to);else{add(from,to);break}nr+=d[0];nc+=d[1]}});
+      } else if(t==='k'){
+        for(nr=r-1;nr<=r+1;nr++)for(nc=col-1;nc<=col+1;nc++)if(inside(nr,nc)&&(nr!==r||nc!==col))add(from,ix(nr,nc));
+        var enemy=other(c);if(!inCheck(c,s)){
+          if(c==='w'&&from===60&&s.castle.K&&b[61]=='.'&&b[62]=='.'&&!attacked(61,enemy,s)&&!attacked(62,enemy,s))add(60,62,'castleK');
+          if(c==='w'&&from===60&&s.castle.Q&&b[59]=='.'&&b[58]=='.'&&b[57]=='.'&&!attacked(59,enemy,s)&&!attacked(58,enemy,s))add(60,58,'castleQ');
+          if(c==='b'&&from===4&&s.castle.k&&b[5]=='.'&&b[6]=='.'&&!attacked(5,enemy,s)&&!attacked(6,enemy,s))add(4,6,'castleK');
+          if(c==='b'&&from===4&&s.castle.q&&b[3]=='.'&&b[2]=='.'&&b[1]=='.'&&!attacked(3,enemy,s)&&!attacked(2,enemy,s))add(4,2,'castleQ');
+        }
+      }
+    }return out;
+  }
+  function apply(s,m){
+    var n={b:s.b.slice(),turn:other(s.turn),castle:Object.assign({},s.castle),ep:-1,half:s.half+1,last:{from:m.from,to:m.to},captured:s.captured.slice()};
+    var p=n.b[m.from],c=color(p),target=n.b[m.to];if(target!='.'){n.captured.push(target);n.half=0}if(p.toLowerCase()==='p')n.half=0;
+    n.b[m.from]='.';n.b[m.to]=p;
+    if(m.special==='ep'){var cap=m.to+(c==='w'?8:-8);n.captured.push(n.b[cap]);n.b[cap]='.'}
+    if(m.special==='double')n.ep=(m.from+m.to)/2;
+    if(m.special==='promo')n.b[m.to]=c==='w'?m.promo.toUpperCase():m.promo;
+    if(m.special==='castleK'){var rf=m.to+1,rt=m.to-1;n.b[rt]=n.b[rf];n.b[rf]='.'}
+    if(m.special==='castleQ'){rf=m.to-2;rt=m.to+1;n.b[rt]=n.b[rf];n.b[rf]='.'}
+    if(p==='K'){n.castle.K=0;n.castle.Q=0}if(p==='k'){n.castle.k=0;n.castle.q=0}
+    if(m.from===63||m.to===63)n.castle.K=0;if(m.from===56||m.to===56)n.castle.Q=0;if(m.from===7||m.to===7)n.castle.k=0;if(m.from===0||m.to===0)n.castle.q=0;
+    return n;
+  }
+  function legal(s,c){return pseudo(s,c).filter(function(m){return !inCheck(c,apply(s,m))})}
+  function sqName(i){var z=rc(i);return 'abcdefgh'[z[1]]+(8-z[0])}
+  function notation(before,m,after){var p=before.b[m.from],t=p.toLowerCase();if(m.special==='castleK')return 'O-O';if(m.special==='castleQ')return 'O-O-O';var cap=m.captured!='.'||m.special==='ep';var s=t==='p'?(cap?'abcdefgh'[rc(m.from)[1]]:''):p.toUpperCase();s+=(cap?'×':'')+sqName(m.to);if(m.promo)s+='='+m.promo.toUpperCase();var replies=legal(after,after.turn);if(inCheck(after.turn,after))s+=replies.length?'＋':'#';return s}
+  function chooseMove(moves,desiredPromo){if(!desiredPromo)return moves[0];for(var i=0;i<moves.length;i++)if(moves[i].promo===desiredPromo)return moves[i];return moves[0]}
+  function canMoveNow(){if(gameOver||aiBusy)return false;if(mode==='local')return true;if(mode==='online')return onlineReady&&onlineRoom&&onlineRoom.status==='playing'&&state.turn===player;return state.turn===player}
+  function onSquare(idx){
+    if(!canMoveNow())return;
+    var p=state.b[idx],mover=state.turn;
+    if(selected!==null){var choices=legalForSelected.filter(function(m){return m.to===idx});if(choices.length){if(choices.length>1){showPromotion(choices);return}commit(choices[0],false);return}}
+    if(color(p)===mover){selected=idx;legalForSelected=legal(state,mover).filter(function(m){return m.from===idx});render()}else{selected=null;legalForSelected=[];render()}
+  }
+  function showPromotion(choices){pendingPromo=choices;promoOptions.innerHTML='';var mover=color(state.b[choices[0].from]);['q','r','b','n'].forEach(function(t){var btn=document.createElement('button');var pc=mover==='w'?t.toUpperCase():t;btn.textContent=glyph[pc];btn.setAttribute('aria-label','Promote to '+({q:'queen',r:'rook',b:'bishop',n:'knight'})[t]);btn.onclick=function(){promo.classList.remove('show');commit(chooseMove(choices,t),false)};promoOptions.appendChild(btn)});promo.classList.add('show')}
+  function recordMove(before,m,after,mover){
+    var st=stats[mover],piece=before.b[m.from],target=m.captured;
+    st.moves++;
+    if(target!='.'||m.special==='ep'){st.captures++;st.material+=m.special==='ep'?100:value[target.toLowerCase()]}
+    if(inCheck(after.turn,after))st.checks++;
+    if(m.special==='castleK'||m.special==='castleQ')st.castled++;
+    if(m.special==='promo')st.promotions++;
+    if([27,28,35,36].indexOf(m.to)>=0)st.center++;
+    if((piece.toLowerCase()==='n'||piece.toLowerCase()==='b')&&((mover==='w'&&[57,58,61,62].indexOf(m.from)>=0)||(mover==='b'&&[1,2,5,6].indexOf(m.from)>=0)))st.development++;
+    var candidates=legal(before,mover),best=-Infinity;
+    for(var i=0;i<candidates.length;i++)best=Math.max(best,evaluate(apply(before,candidates[i]),mover));
+    var gap=best-evaluate(after,mover);
+    if(gap>190)st.blunders++;else if(gap>75)st.inaccuracies++;else st.good++;
+  }
+  function commit(m,fromAI){
+    var before=state,mover=before.turn;history.push({state:cloneState(state),stats:cloneStats(stats),note:null});state=apply(state,m);recordMove(before,m,state,mover);history[history.length-1].note=notation(before,m,state);selected=null;legalForSelected=[];clueMove=null;clueText.hidden=true;if(idleOpen)hideIdlePopup();
+    if(mode==='ai'){if(!fromAI&&m.captured!='.')say('hurt');if(fromAI&&m.captured!='.')say('capture')}
+    if(mode==='online')onlineMoves.push({from:m.from,to:m.to,promo:m.promo||'',san:history[history.length-1].note});
+    render();var ended=checkEnd();refreshMyPresenceStatus();persistGame();armIdleTimer();
+    if(mode==='online'){syncOnlineMove(ended);return}
+    if(!ended&&mode==='ai'&&state.turn!==player){var v=gameVersion;window.setTimeout(function(){if(v===gameVersion)aiTurn()},320)}
+  }
+  function cloneState(s){return {b:s.b.slice(),turn:s.turn,castle:Object.assign({},s.castle),ep:s.ep,half:s.half,last:s.last?Object.assign({},s.last):null,captured:s.captured.slice()}}
+  function evaluate(s,ai){var score=0;for(var i=0;i<64;i++){var p=s.b[i];if(p=='.')continue;var v=value[p.toLowerCase()],z=rc(i);var center=(3.5-Math.abs(3.5-z[0]))+(3.5-Math.abs(3.5-z[1]));if(p.toLowerCase()!=='k'&&p.toLowerCase()!=='p')v+=center*3;score+=(color(p)===ai?v:-v)}return score}
+  function minimax(s,depth,alpha,beta,ai){var ms=legal(s,s.turn);if(!ms.length){if(inCheck(s.turn,s))return s.turn===ai?-999999-depth:999999+depth;return 0}if(depth===0)return evaluate(s,ai);if(s.turn===ai){var best=-Infinity;for(var i=0;i<ms.length;i++){best=Math.max(best,minimax(apply(s,ms[i]),depth-1,alpha,beta,ai));alpha=Math.max(alpha,best);if(beta<=alpha)break}return best}else{best=Infinity;for(i=0;i<ms.length;i++){best=Math.min(best,minimax(apply(s,ms[i]),depth-1,alpha,beta,ai));beta=Math.min(beta,best);if(beta<=alpha)break}return best}}
+  function categoryFor(c){
+    var s=stats[c],quality=s.moves?((s.good+s.inaccuracies*.5)/s.moves):0;
+    var score=25+quality*45+Math.min(20,s.center*2+s.development*3+s.castled*8)+Math.min(10,s.checks*2)+(s.result==='win'?15:s.result==='draw'?6:0);
+    return score>=78?'Advanced':score>=55?'Intermediate':'Basic';
+  }
+  function liveProfile(c){return stats[c].moves<4?(persistentProfile?persistentProfile+' profile':'Learning your style'):categoryFor(c)+' profile'}
+  function aiTurn(){
+    if(gameOver||mode!=='ai'||state.turn===player)return;var version=gameVersion;aiBusy=true;opponentBar.classList.add('thinking');say('think');renderStatus();updateControls();
+    window.setTimeout(function(){
+      if(version!==gameVersion||gameOver||mode!=='ai')return;
+      var ai=other(player),ms=legal(state,ai),level=stats[player].moves<4?(persistentProfile||'Intermediate'):categoryFor(player),depth=level==='Advanced'?2:level==='Intermediate'?1:0,noise=level==='Advanced'?3:level==='Intermediate'?18:85;
+      var scored=ms.map(function(m){return {m:m,v:minimax(apply(state,m),depth,-Infinity,Infinity,ai)+(Math.random()*noise)}}).sort(function(a,b){return b.v-a.v});
+      aiBusy=false;opponentBar.classList.remove('thinking');if(scored.length)commit(scored[0].m,true);
+    },420);
+  }
+  function setResults(winner){stats.w.result=winner==='w'?'win':winner==='b'?'loss':'draw';stats.b.result=winner==='b'?'win':winner==='w'?'loss':'draw'}
+  function analysisData(c){
+    var s=stats[c],accuracy=s.moves?Math.round(((s.good+s.inaccuracies*.5)/s.moves)*100):0,level=categoryFor(c),strengths=[],focus=[];
+    if(s.center>=2)strengths.push('You contested the center');if(s.development>=2)strengths.push('Your minor pieces developed early');if(s.castled)strengths.push('You secured your king by castling');if(s.checks>=2)strengths.push('You created repeated king pressure');if(s.material>=500)strengths.push('You converted meaningful material');
+    if(!strengths.length)strengths.push('You kept playing and completed a full decision cycle');
+    if(s.blunders>1)focus.push('Before moving, check every capture, check, and threat');if(!s.castled&&s.moves>=8)focus.push('Castle earlier when the position allows it');if(s.center<2&&s.moves>=6)focus.push('Use pawns and pieces to influence the four center squares');if(s.development<2&&s.moves>=8)focus.push('Develop knights and bishops before repeated piece moves');if(!focus.length)focus.push('Keep comparing your move with one forcing alternative');
+    return {level:level,accuracy:accuracy,strengths:strengths.slice(0,2).join('. ')+'.',focus:focus.slice(0,2).join('. ')+'.',s:s};
+  }
+  function showAnalysis(){
+    analysisEl.classList.add('show');
+    if(!isMember()){
+      analysisEl.innerHTML='<div class="analysis-lock"><h2>Unlock your game analysis</h2><p>Your result is shown above. Log in or sign up to see your detailed performance, skill level, strengths, and next focus.</p><div class="analysis-actions"><button id="analysisLogin">Log in</button><button id="analysisSignup">Sign up</button></div></div>';
+      document.getElementById('analysisLogin').onclick=function(){openAuth('login')};document.getElementById('analysisSignup').onclick=function(){openAuth('signup')};return;
+    }
+    if(mode==='ai'||mode==='online'){
+      var d=analysisData(player),result=d.s.result==='win'?'You won':d.s.result==='loss'?'You lost':'The game was drawn';if(mode==='ai')persistentProfile=d.level;if(!analysisTracked){analysisTracked=true;track('analysis_viewed',{skill_tier:d.level.toLowerCase()})}
+      analysisEl.innerHTML='<h2>Match analysis</h2><div class="analysis-grade">'+d.level+' player</div><p class="analysis-summary">'+result+' after '+d.s.moves+' of your moves.'+(mode==='ai'?' FruityFly will use this profile to tune the next game.':' Your rating reflects this match only.')+'</p><div class="analysis-grid"><div class="analysis-stat"><strong>'+d.accuracy+'%</strong><span>solid choices</span></div><div class="analysis-stat"><strong>'+d.s.checks+'</strong><span>checks</span></div><div class="analysis-stat"><strong>'+Math.round(d.s.material/100)+'</strong><span>pawn value won</span></div></div><h3>What worked</h3><p>'+d.strengths+'</p><h3>Next focus</h3><p>'+d.focus+'</p>';
+    }else{
+      var w=analysisData('w'),b=analysisData('b');if(!analysisTracked){analysisTracked=true;track('analysis_viewed')}
+      analysisEl.innerHTML='<h2>Match analysis</h2><div class="analysis-grade">Player 1: '+w.level+' · Player 2: '+b.level+'</div><p class="analysis-summary">Player 1 made '+w.s.moves+' moves with '+w.accuracy+'% solid choices. Player 2 made '+b.s.moves+' moves with '+b.accuracy+'% solid choices.</p><h3>Player 1</h3><p>'+w.strengths+' '+w.focus+'</p><h3>Player 2</h3><p>'+b.strengths+' '+b.focus+'</p>';
+    }
+  }
+  function saveGameHistory(){
+    if(historySaved||!isMember()||!db||!currentUser)return;historySaved=true;
+    try{
+      var pColor=resignLoser||(mode==='local'?'w':player),d=analysisData(pColor);
+      var record={timestamp:firebase.database.ServerValue.TIMESTAMP,mode:mode==='ai'?'fruityfly':mode,color:pColor,result:stats[pColor].result,moves:history.length,tier:d.level,analysis:{accuracy:d.accuracy,good:d.s.good,inaccuracies:d.s.inaccuracies,blunders:d.s.blunders,checks:d.s.checks,captures:d.s.captures,strengths:d.strengths,focus:d.focus}};
+      var write=db.ref('chessUsers/'+currentUser.uid+'/games').push(record);if(write&&write.catch)write.catch(function(){});if(write&&write.then)write.then(function(){refreshClueAccess()},function(){});
+    }catch(saveError){}
+  }
+  function friendlyName(){
+    if(!currentUser)return 'Player';
+    if(currentUser.displayName)return currentUser.displayName;
+    var local=String(currentUser.email||'').split('@')[0].replace(/[._-]+/g,' ').trim();
+    if(!local)return 'Member';
+    return local.split(' ').map(function(w){return w?w.charAt(0).toUpperCase()+w.slice(1):w}).join(' ');
+  }
+  function tierExplain(level){
+    if(level==='Advanced')return 'You play sharp, consistent chess. Your pieces work together, your king stays safe, and costly mistakes are rare. Keep it up by studying forcing moves and endgames.';
+    if(level==='Intermediate')return 'You play with a plan. You contest the center, develop your pieces early, and spot most tactics. The next step is checking every capture, check, and threat before you move.';
+    return 'You are building the foundations of good chess: developing pieces, watching for threats, and finishing full games. Focus on the center and castling early, and this tier will climb.';
+  }
+  var dashModal=document.getElementById('dashModal'),dashBody=document.getElementById('dashBody');
+  function openDashboard(){
+    if(!isMember())return;
+    dashModal.classList.add('show');document.getElementById('dashName').textContent='Signed in as '+friendlyName()+'. Here is how your game is growing.';
+    dashBody.innerHTML='<p class="dash-sub">Loading your games...</p>';
+    if(!db||!currentUser){dashBody.innerHTML='<p class="dash-sub">Your game history could not load right now. Please try again in a moment.</p>';return}
+    db.ref('chessUsers/'+currentUser.uid+'/games').once('value').then(function(snapshot){renderDashboard(snapshot.val())}).catch(function(){dashBody.innerHTML='<p class="dash-sub">Your game history could not load right now. Please try again in a moment.</p>'});
+  }
+  function closeDashboard(){dashModal.classList.remove('show')}
+  function tierValue(tier){return tier==='Advanced'?3:tier==='Intermediate'?2:1}
+  function chartSVG(games){
+    var w=340,h=132,padL=66,padR=14,padT=12,padB=20,iw=w-padL-padR,ih=h-padT-padB,n=games.length;
+    function yFor(v){return padT+ih-((v-1)/2)*ih}
+    function xFor(i){return n===1?padL+iw/2:padL+(iw*i/(n-1))}
+    var svg='<svg class="dash-chart" viewBox="0 0 '+w+' '+h+'" role="img" aria-label="Skill progression chart">';
+    ['Advanced','Intermediate','Basic'].forEach(function(label){var y=yFor(tierValue(label));svg+='<line x1="'+padL+'" y1="'+y+'" x2="'+(w-padR)+'" y2="'+y+'" style="stroke:var(--line)" stroke-width="1"/><text x="'+(padL-8)+'" y="'+(y+3)+'" text-anchor="end" style="fill:var(--muted);font-size:9px;font-weight:700">'+label+'</text>'});
+    var points=games.map(function(g,i){return xFor(i)+','+yFor(tierValue(g.tier))}).join(' ');
+    if(n>1)svg+='<polyline points="'+points+'" fill="none" style="stroke:var(--lime-deep)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>';
+    games.forEach(function(g,i){svg+='<circle cx="'+xFor(i)+'" cy="'+yFor(tierValue(g.tier))+'" r="4" style="fill:var(--lime-deep)"/>'});
+    svg+='<text x="'+padL+'" y="'+(h-4)+'" style="fill:var(--muted);font-size:9px;font-weight:700">First game</text>';
+    if(n>1)svg+='<text x="'+(w-padR)+'" y="'+(h-4)+'" text-anchor="end" style="fill:var(--muted);font-size:9px;font-weight:700">Latest game</text>';
+    return svg+'</svg>';
+  }
+  function renderDashboard(raw){
+    var games=[];if(raw)Object.keys(raw).forEach(function(k){if(raw[k])games.push(raw[k])});
+    games.sort(function(a,b){return (a.timestamp||0)-(b.timestamp||0)});
+    if(!games.length){currentTier=null;updateClueUI();dashBody.innerHTML='<div class="dash-empty"><p>No games recorded yet. Finish a game while you are signed in and it will appear here, along with your analysis and how your skill is progressing.</p><button class="auth-submit" id="dashPlayBtn" type="button">Play a game</button></div>';document.getElementById('dashPlayBtn').onclick=closeDashboard;return}
+    var wins=0,losses=0,draws=0;games.forEach(function(g){if(g.result==='win')wins++;else if(g.result==='loss')losses++;else draws++});
+    var total=games.length,winRate=Math.round(wins/total*100),latest=games[total-1];currentTier=latest.tier;updateClueUI();
+    var html='<div class="dash-stats"><div class="dash-stat"><strong>'+total+'</strong><span>Games played</span></div><div class="dash-stat"><strong>'+wins+'</strong><span>Wins</span></div><div class="dash-stat"><strong>'+losses+'</strong><span>Losses</span></div><div class="dash-stat"><strong>'+draws+'</strong><span>Draws</span></div><div class="dash-stat"><strong>'+winRate+'%</strong><span>Win rate</span></div></div>';
+    html+='<div class="dash-tier"><span class="dash-tier-badge">Current tier: '+latest.tier+'</span><p>'+tierExplain(latest.tier)+'</p></div>';
+    html+='<h3 class="dash-section-title">Skill progression</h3>'+chartSVG(games);
+    html+='<h3 class="dash-section-title">Recent games</h3><div id="dashGames"></div>';
+    dashBody.innerHTML=html;
+    var list=document.getElementById('dashGames'),modeLabel={fruityfly:'vs FruityFly',local:'Two player',online:'Online'},resultLabel={win:'Won',loss:'Lost',draw:'Draw'};
+    games.slice().reverse().forEach(function(g){
+      var item=document.createElement('div');item.className='dash-game';
+      var head=document.createElement('button');head.className='dash-game-head';head.type='button';
+      var when=g.timestamp?new Date(g.timestamp).toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}):'';
+      var pill=document.createElement('span');pill.className='dash-result '+(g.result||'draw');pill.textContent=resultLabel[g.result]||'Draw';head.appendChild(pill);
+      var main=document.createElement('span');main.textContent=(modeLabel[g.mode]||'Game')+' · '+(g.color==='b'?'Black':'White');head.appendChild(main);
+      var meta=document.createElement('span');meta.className='dash-game-meta';meta.textContent=when+' · '+(g.moves||0)+' moves · '+g.tier;head.appendChild(meta);
+      var chev=document.createElement('span');chev.className='dash-chevron';chev.textContent='Details';head.appendChild(chev);
+      var detail=document.createElement('div');detail.className='dash-game-detail';
+      var a=g.analysis||{};
+      var grid='<div class="dash-detail-grid"><div class="dash-stat"><strong>'+(a.accuracy!=null?a.accuracy+'%':'n/a')+'</strong><span>Solid choices</span></div><div class="dash-stat"><strong>'+(a.good!=null?a.good:0)+'</strong><span>Good moves</span></div><div class="dash-stat"><strong>'+(a.inaccuracies!=null?a.inaccuracies:0)+'</strong><span>Inaccuracies</span></div><div class="dash-stat"><strong>'+(a.blunders!=null?a.blunders:0)+'</strong><span>Blunders</span></div></div>';
+      var extra='';if(a.strengths)extra+='<p><strong>What worked:</strong> '+a.strengths+'</p>';if(a.focus)extra+='<p><strong>Next focus:</strong> '+a.focus+'</p>';
+      detail.innerHTML=grid+extra;
+      head.onclick=function(){item.classList.toggle('open');chev.textContent=item.classList.contains('open')?'Hide':'Details'};
+      item.appendChild(head);item.appendChild(detail);list.appendChild(item);
+    });
+  }
+  function checkEnd(){
+    var ms=legal(state,state.turn);if(ms.length&&state.half<100)return false;gameOver=true;stopIdleTimer();if(idleOpen)hideIdlePopup();var winner=null;
+    if(!ms.length&&inCheck(state.turn,state)){winner=other(state.turn);gameEndType='mate';gameResult=winner==='w'?'White wins by checkmate':'Black wins by checkmate';setResults(winner);var humanWon=winner===player;statusTitle.textContent=mode==='local'?(winner==='w'?'Player 1 wins':'Player 2 wins'):(mode==='online'?(humanWon?'You win!':'Opponent wins'):(humanWon?'You win!':'FruityFly wins'));statusCopy.textContent='Checkmate. Review the game below, then start a rematch.';if(mode==='ai')say(humanWon?'lose':'win')}
+    else{gameEndType='draw';gameResult='Draw';setResults(null);statusTitle.textContent='Draw';statusCopy.textContent=state.half>=100?'Fifty moves without a pawn move or capture.':'No legal moves remain.';say('draw')}
+    trackGameCompleted();saveGameHistory();showAnalysis();render();return true;
+  }
+  function render(){
+    boardEl.innerHTML='';var order=[];for(var i=0;i<64;i++)order.push(flipped?63-i:i);var legalTargets={};legalForSelected.forEach(function(m){legalTargets[m.to]=state.b[m.to]!='.'||m.special==='ep'?'capture':'legal'});var checkedKing=inCheck(state.turn,state)?state.b.indexOf(state.turn==='w'?'K':'k'):-1;
+    order.forEach(function(idx){var z=rc(idx),sq=document.createElement('button');sq.className='square '+((z[0]+z[1])%2?'dark':'light');sq.setAttribute('role','gridcell');sq.setAttribute('aria-label',sqName(idx)+(state.b[idx]!='.'?' '+pieceName(state.b[idx]):' empty'));if(idx===selected)sq.classList.add('selected');if(state.last&&(idx===state.last.from||idx===state.last.to))sq.classList.add('last');if(legalTargets[idx])sq.classList.add(legalTargets[idx]);if(idx===checkedKing)sq.classList.add('check');if(clueMove&&(idx===clueMove.from||idx===clueMove.to))sq.classList.add('clue');
+      var p=state.b[idx];if(p!='.'){var span=document.createElement('span');span.className='piece '+(color(p)==='w'?'white':'black');span.textContent=glyph[p];sq.appendChild(span)}
+      var showRank=flipped?z[1]===7:z[1]===0,showFile=flipped?z[0]===0:z[0]===7;if(showRank){var rank=document.createElement('span');rank.className='coord rank';rank.textContent=8-z[0];sq.appendChild(rank)}if(showFile){var file=document.createElement('span');file.className='coord file';file.textContent='abcdefgh'[z[1]];sq.appendChild(file)}
+      sq.onclick=function(){onSquare(idx)};boardEl.appendChild(sq)
+    });
+    sideEl.classList.toggle('mate',gameOver&&gameEndType==='mate');boardWrap.classList.toggle('mate',gameOver&&gameEndType==='mate');renderMoves();renderCaptured();renderStatus();updateControls();
+  }
+  function pieceName(p){return (color(p)==='w'?'white ':'black ')+({p:'pawn',n:'knight',b:'bishop',r:'rook',q:'queen',k:'king'})[p.toLowerCase()]}
+  function renderMoves(){if(!history.length){movesEl.innerHTML='<div class="empty-moves">No moves yet. Open with a center pawn or surprise the fly.</div>';return}movesEl.innerHTML='';for(var i=0;i<history.length;i+=2){var n=document.createElement('div');n.className='move-cell move-num';n.textContent=(i/2+1)+'.';movesEl.appendChild(n);[i,i+1].forEach(function(j){var c=document.createElement('div');c.className='move-cell';c.textContent=history[j]?history[j].note:'';movesEl.appendChild(c)})}movesEl.scrollTop=movesEl.scrollHeight}
+  function renderCaptured(){var arr=mode==='ai'?state.captured.filter(function(p){return color(p)!==player}):state.captured;capturedEl.textContent=arr.map(function(p){return glyph[p]}).join('')}
+  function renderStatus(){
+    if(mode==='local')turnText.textContent=(state.turn==='w'?'Player 1 · White':'Player 2 · Black')+' to move';else turnText.textContent=(state.turn==='w'?'White':'Black')+' to move';
+    profileText.textContent=mode==='ai'?liveProfile(player):(mode==='online'?(roomCode?'Room '+roomCode:'Not connected'):'Profiles scored after game');if(gameOver)return;
+    if(mode==='online'){
+      if(!onlineRoom){statusTitle.textContent='Play someone online';statusCopy.textContent='Create a room or enter a code to join another player.';bubble.textContent='Ready to connect';return}
+      if(onlineRoom.status==='waiting'){statusTitle.textContent='Waiting for an opponent';statusCopy.textContent='Share the room code. The game begins as soon as Black joins.';bubble.textContent='Room '+roomCode;return}
+      var onlineCheck=inCheck(state.turn,state),yourTurn=state.turn===player,opponent=(player==='w'?(onlineRoom.players&&onlineRoom.players.black):(onlineRoom.players&&onlineRoom.players.white));
+      statusTitle.textContent=onlineCheck?(yourTurn?'Your king is in check':'Opponent is in check'):(yourTurn?'Your turn':'Opponent’s turn');statusCopy.textContent=onlineCheck?(yourTurn?'Move the king, capture the attacker, or block the check.':'Your opponent must answer the check.'):(yourTurn?'Select a piece, then choose a highlighted square.':'Waiting for your opponent’s move.');bubble.textContent=opponent&&opponent.name?opponent.name+' is online':'Connected online';return
+    }
+    if(aiBusy){statusTitle.textContent='FruityFly is thinking';statusCopy.textContent='It is matching its search to your live playing profile.';return}
+    var check=inCheck(state.turn,state);
+    if(mode==='local'){
+      var who=state.turn==='w'?'Player 1':'Player 2';statusTitle.textContent=check?who+' is in check':who+' to move';statusCopy.textContent=check?'Protect the king by moving, capturing, or blocking.':'Select a piece, then choose a highlighted square.';bubble.textContent=(state.turn==='w'?'Player 1':'Player 2')+' is at the board.';
+    }else{
+      var yours=state.turn===player;statusTitle.textContent=check?(yours?'Your king is in check':'Fly king in check'):(yours?'Your turn':'FruityFly’s turn');statusCopy.textContent=check?(yours?'Move the king, capture the attacker, or block the check.':'Nice attack. FruityFly has to respond.'):(yours?'Select a piece, then choose a highlighted square.':'FruityFly is choosing a reply.');if(check&&state.turn!==player)say('check');
+    }
+  }
+  function updateControls(){undoBtn.disabled=mode==='online'||aiBusy||!history.length;undoBtn.innerHTML=mode==='online'?'<svg viewBox="0 0 24 24"><path d="M9 7 4 12l5 5"/><path d="M4 12h9a7 7 0 0 1 7 7"/></svg>No undo online':'<svg viewBox="0 0 24 24"><path d="M9 7 4 12l5 5"/><path d="M4 12h9a7 7 0 0 1 7 7"/></svg>Undo turn';flipBtn.disabled=false;document.getElementById('newBtn').lastChild.nodeValue=mode==='online'?' Leave room':' New game';document.getElementById('resignBtn').disabled=!onlineRoom||onlineRoom.status!=='playing';document.getElementById('rematchBtn').disabled=!onlineRoom||onlineRoom.status!=='finished'}
+  function syncModeUI(){
+    document.getElementById('flyMode').classList.toggle('active',mode==='ai');document.getElementById('localMode').classList.toggle('active',mode==='local');document.getElementById('worldMode').classList.toggle('active',mode==='online');sideChoice.classList.toggle('disabled',mode!=='ai');sideChoice.style.display=mode==='online'?'none':'flex';
+    document.getElementById('playWhite').disabled=mode!=='ai';document.getElementById('playBlack').disabled=mode!=='ai';profileStrip.style.display='flex';onlinePanel.classList.toggle('show',mode==='online');onlineGameControls.classList.toggle('show',mode==='online'&&!!roomCode);
+    var onlineOpponent=onlineRoom&&onlineRoom.players&&(player==='w'?onlineRoom.players.black:onlineRoom.players.white);document.getElementById('opponentName').textContent=mode==='ai'?'FruityFly':(mode==='online'&&onlineOpponent&&onlineOpponent.name?onlineOpponent.name:'Player 2');document.getElementById('opponentRole').textContent=mode==='ai'?'Adaptive tiny rival':(mode==='online'?'Online opponent':'Playing Black');document.getElementById('youAvatar').textContent=mode==='ai'?'YOU':(mode==='online'?'ME':'P1');document.getElementById('youName').textContent=mode==='ai'?'You':(mode==='online'?onlineName:'Player 1');
+  }
+  function newGame(side,newMode){
+    if(newMode)mode=newMode;player=side||player;gameVersion++;clearSavedGame();flipped=(mode==='ai'||mode==='online')&&player==='b';state=initial();history=[];stats=freshStats();selected=null;legalForSelected=[];aiBusy=false;gameOver=false;gameEndType='';gameResult='';onlineMoves=[];opponentBar.classList.remove('thinking');analysisEl.classList.remove('show');analysisEl.innerHTML='';sideEl.classList.remove('mate');boardWrap.classList.remove('mate');
+    document.getElementById('playWhite').classList.toggle('active',player==='w');document.getElementById('playBlack').classList.toggle('active',player==='b');document.getElementById('yourColor').textContent=(mode==='ai'||mode==='online')?'Playing '+(player==='w'?'White':'Black'):'Playing White';completionTracked=false;analysisTracked=false;historySaved=false;resignLoser=null;clueMove=null;clueText.hidden=true;stopIdleTimer();if(idleOpen)hideIdlePopup();if(mode!=='online')track('game_started',{mode:gaMode()});syncModeUI();say('start');render();
+    if(mode==='ai'&&player==='b'){var v=gameVersion;window.setTimeout(function(){if(v===gameVersion)aiTurn()},350)}
+    armIdleTimer();refreshMyPresenceStatus();
+  }
+  function showOnlineError(message){onlineError.textContent=message||'';onlineError.classList.toggle('show',!!message)}
+  function ensureOnlineAuth(done){if(!auth||currentUser||auth.currentUser){done();return}auth.signInAnonymously().then(function(){done()},function(){done()})}
+  function readRoomOnce(target,done){var handler=function(snapshot){target.off('value',handler);done(snapshot)};target.on('value',handler,function(){target.off('value',handler);showOnlineError('Could not reach the online game service. Try again.')})}
+  function makeRoomCode(){var chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789',out='';for(var i=0;i<6;i++)out+=chars[Math.floor(Math.random()*chars.length)];return out}
+  function normalizeMoves(raw){if(!raw)return[];if(Array.isArray(raw))return raw.filter(Boolean);return Object.keys(raw).sort(function(a,b){return Number(a)-Number(b)}).map(function(k){return raw[k]}).filter(Boolean)}
+  function rebuildOnline(rawMoves,fen){
+    var packets=normalizeMoves(rawMoves);state=initial();history=[];stats=freshStats();onlineMoves=[];
+    for(var i=0;i<packets.length;i++){var packet=packets[i],before=state,candidates=legal(state,state.turn).filter(function(m){return m.from===Number(packet.from)&&m.to===Number(packet.to)&&(!packet.promo||m.promo===packet.promo)});if(!candidates.length)break;var move=candidates[0];history.push({state:cloneState(state),stats:cloneStats(stats),note:''});state=apply(state,move);recordMove(before,move,state,before.turn);history[history.length-1].note=packet.san||notation(before,move,state);onlineMoves.push({from:move.from,to:move.to,promo:move.promo||'',san:history[history.length-1].note})}
+    if(!packets.length&&fen){var parsed=fenToState(fen);if(parsed)state=parsed}
+  }
+  function setOnlineFinished(result){
+    gameOver=true;stopIdleTimer();if(idleOpen)hideIdlePopup();gameResult=result||'Game finished';gameEndType=gameResult.toLowerCase().indexOf('checkmate')>=0?'mate':(gameResult==='Draw'?'draw':'finished');
+    var whiteWon=gameResult.indexOf('White wins')===0,blackWon=gameResult.indexOf('Black wins')===0,winner=whiteWon?'w':(blackWon?'b':null);setResults(winner);onlineStartedTracked=false;trackGameCompleted();saveGameHistory();
+    statusTitle.textContent=winner?(winner===player?'You win!':'Opponent wins'):'Draw';statusCopy.textContent=gameResult+'. Review the game below or start a rematch.';if(!analysisEl.classList.contains('show'))showAnalysis();refreshMyPresenceStatus()
+  }
+  function updatePresenceUI(){
+    if(!onlineRoom)return;var opponent=player==='w'?(onlineRoom.players&&onlineRoom.players.black):(onlineRoom.players&&onlineRoom.players.white),connected=!!(opponent&&opponent.connected);
+    presence.classList.toggle('offline',!!opponent&&!connected);claimWinBtn.hidden=!opponent||connected||onlineRoom.status==='finished';
+    if(!opponent){presenceText.textContent='Waiting for Black to join';roomMeta.textContent=inviteNote||'Share this code with the person you want to play.'}
+    else if(connected){inviteNote='';presenceText.textContent=lastOpponentConnected===false?'Opponent reconnected':'Both players connected';roomMeta.textContent=onlineRoom.status==='finished'?(onlineRoom.result||'Game finished'):'You are playing live in the same room.'}
+    else{presenceText.textContent='Opponent disconnected';roomMeta.textContent='You can wait for them to reconnect or claim the win.'}
+    lastOpponentConnected=connected;syncModeUI()
+  }
+  function onRoomValue(snapshot){
+    var room=snapshot.val();if(!room){showOnlineError('This room no longer exists.');onlineReady=false;return}var prevMoves=history.length;onlineRoom=room;onlineReady=room.status==='playing';rebuildOnline(room.moves,room.fen);selected=null;legalForSelected=[];if(room.status==='playing'&&history.length!==prevMoves){if(idleOpen)hideIdlePopup();armIdleTimer()}if(room.status==='playing'&&!onlineStartedTracked){onlineStartedTracked=true;track('game_started',{mode:'online'})}if(room.status==='waiting')onlineStartedTracked=false;
+    if(room.status==='finished')setOnlineFinished(room.result||'Game finished');else{gameOver=false;gameEndType='';gameResult='';analysisEl.classList.remove('show');if(!history.length){completionTracked=false;historySaved=false}}
+    updatePresenceUI();refreshMyPresenceStatus();render()
+  }
+  function attachRoom(code,side){
+    if(roomRef&&roomListener)roomRef.off('value',roomListener);if(presenceListener)db.ref('.info/connected').off('value',presenceListener);
+    roomCode=code;player=side;flipped=side==='b';inviteNote='';roomRef=db.ref('chessRooms/'+code);roomListener=onRoomValue;roomRef.on('value',roomListener,function(){showOnlineError('The room connection was interrupted.')});
+    presenceListener=function(snapshot){if(snapshot.val()===true&&roomRef){var connectedRef=roomRef.child('players/'+(player==='w'?'white':'black')+'/connected');connectedRef.onDisconnect().set(false);connectedRef.set(true)}};db.ref('.info/connected').on('value',presenceListener);
+    onlineLobby.style.display='none';roomView.classList.add('show');roomCodeText.textContent=code;document.getElementById('yourColor').textContent='Playing '+(side==='w'?'White':'Black');showOnlineError('');syncModeUI();render()
+  }
+  function bumpRoomsActive(delta){
+    /* Fire-and-forget roomsActive counter on chessStats, used only for monitoring. Never awaited; every failure is silent so room creation and leaving always work. A decrement aborts (returns undefined) when the counter is missing or already at zero, so it never goes negative or writes a no-change value. */
+    if(!db)return;
+    try{
+      var p=db.ref('chessStats').transaction(function(current){
+        if(delta<0&&(!current||typeof current.roomsActive!=='number'||current.roomsActive<=0))return undefined;
+        var next=current?Object.assign({},current):{};
+        next.roomsActive=(typeof next.roomsActive==='number'?next.roomsActive:0)+delta;
+        next.updatedAt=firebase.database.ServerValue.TIMESTAMP;
+        return next;
+      });
+      if(p&&p.catch)p.catch(function(){});
+    }catch(e){}
+  }
+  function createRoom(onCreated){
+    if(!db){showOnlineError('Online play could not load. Check your connection and try again.');return}showOnlineError('');
+    ensureOnlineAuth(function(){var tryCreate=function(attempt){var code=makeRoomCode(),target=db.ref('chessRooms/'+code);readRoomOnce(target,function(snapshot){if(snapshot.exists()){if(attempt<4)tryCreate(attempt+1);else showOnlineError('Could not make a unique room. Try again.');return}var fresh=initial();onlineMoves=[];target.set({fen:boardToFen(fresh),turn:'w',status:'waiting',moves:[],players:{white:{name:onlineName,connected:true}},result:'',updatedAt:firebase.database.ServerValue.TIMESTAMP}).then(function(){bumpRoomsActive(1);mode='online';newGame('w','online');attachRoom(code,'w');track('online_room_created');if(typeof onCreated==='function')onCreated(code)}).catch(function(){showOnlineError('The room could not be created. Try again.')})})};tryCreate(0)})
+  }
+  function joinRoom(){joinRoomWithCode(document.getElementById('roomCodeInput').value.trim().toUpperCase())}
+  function joinRoomWithCode(code){
+    if(!db){showOnlineError('Online play could not load. Check your connection and try again.');return}if(!/^[A-Z2-9]{6}$/.test(code||'')){showOnlineError('Enter the six-character room code.');return}var target=db.ref('chessRooms/'+code);showOnlineError('');
+    ensureOnlineAuth(function(){readRoomOnce(target,function(snapshot){var room=snapshot.val();if(!room){showOnlineError('No room was found with that code.');return}if(room.players&&room.players.black){showOnlineError('That room already has two players.');return}if(room.status==='finished'){showOnlineError('That game has already finished.');return}target.update({'players/black':{name:onlineName,connected:true},status:'playing',updatedAt:firebase.database.ServerValue.TIMESTAMP}).then(function(){mode='online';newGame('b','online');attachRoom(code,'b');track('online_room_joined')}).catch(function(){showOnlineError('Could not join that room. Try again.')})})})
+  }
+  function syncOnlineMove(ended){if(!roomRef)return;var payload={fen:boardToFen(state),turn:state.turn,moves:onlineMoves,status:ended?'finished':'playing',result:ended?gameResult:'',updatedAt:firebase.database.ServerValue.TIMESTAMP};roomRef.update(payload).catch(function(){showOnlineError('Your move did not sync. Check your connection before continuing.')})}
+  function finishOnline(result){if(!roomRef||!onlineRoom||onlineRoom.status==='finished')return;roomRef.update({status:'finished',result:result,updatedAt:firebase.database.ServerValue.TIMESTAMP}).catch(function(){showOnlineError('Could not finish the game. Try again.')})}
+  function rematchOnline(){if(!roomRef)return;var start=initial(),status=onlineRoom&&onlineRoom.players&&onlineRoom.players.black?'playing':'waiting';onlineMoves=[];roomRef.update({fen:boardToFen(start),turn:'w',status:status,moves:[],result:'',updatedAt:firebase.database.ServerValue.TIMESTAMP}).catch(function(){showOnlineError('Could not start the rematch. Try again.')})}
+  function leaveOnline(nextMode){
+    var leavingRef=roomRef;
+    if(roomRef){roomRef.child('players/'+(player==='w'?'white':'black')+'/connected').onDisconnect().cancel();roomRef.child('players/'+(player==='w'?'white':'black')+'/connected').set(false)}
+    if(leavingRef){
+      /* Cleanup: once this player has left, a finished room with nobody connected is removed so old rooms do not pile up. Rooms still in play, and finished rooms with a player still present, are left alone so rematch keeps working. Best effort and silent on failure. */
+      try{
+        leavingRef.once('value').then(function(snap){
+          var room=snap.val();if(!room||room.status!=='finished')return;
+          var players=room.players||{};
+          if(players.white&&players.white.connected===true)return;
+          if(players.black&&players.black.connected===true)return;
+          try{var rp=leavingRef.remove();if(rp&&rp.then)rp.then(function(){bumpRoomsActive(-1)},function(){});else if(rp&&rp.catch)rp.catch(function(){})}catch(e){}
+        }).catch(function(){});
+      }catch(e){}
+    }
+    if(roomRef&&roomListener)roomRef.off('value',roomListener);if(db&&presenceListener)db.ref('.info/connected').off('value',presenceListener);roomRef=null;roomListener=null;presenceListener=null;roomCode='';onlineRoom=null;onlineReady=false;lastOpponentConnected=null;onlineLobby.style.display='block';roomView.classList.remove('show');onlineGameControls.classList.remove('show');mode=nextMode||'ai';newGame('w',mode)
+  }
+  function enterOnlineMode(){if(mode==='online')return;mode='online';track('mode_selected',{mode:'online'});newGame('w','online');onlineLobby.style.display='block';roomView.classList.remove('show');roomCode='';onlineRoom=null;onlineReady=false;showOnlineError('');syncModeUI();render()}
+  document.getElementById('newBtn').onclick=function(){if(mode==='online')leaveOnline('ai');else newGame(player)};
+  document.getElementById('playWhite').onclick=function(){if(mode==='ai'&&player!=='w')newGame('w')};document.getElementById('playBlack').onclick=function(){if(mode==='ai'&&player!=='b')newGame('b')};
+  document.getElementById('flyMode').onclick=function(){track('mode_selected',{mode:'fruityfly'});if(mode==='online')leaveOnline('ai');else if(mode!=='ai')newGame('w','ai')};document.getElementById('localMode').onclick=function(){track('mode_selected',{mode:'two_player'});if(mode==='online')leaveOnline('local');else if(mode!=='local')newGame('w','local')};
+  document.getElementById('worldMode').onclick=enterOnlineMode;document.getElementById('createRoomBtn').onclick=createRoom;document.getElementById('joinRoomBtn').onclick=joinRoom;
+  document.getElementById('roomCodeInput').oninput=function(){this.value=this.value.toUpperCase().replace(/[^A-Z2-9]/g,'').slice(0,6)};document.getElementById('roomCodeInput').onkeydown=function(e){if(e.key==='Enter')joinRoom()};
+  document.getElementById('copyCodeBtn').onclick=function(){var button=this,text=roomCode;if(!text)return;var done=function(){button.textContent='Code copied';window.setTimeout(function(){button.textContent='Copy room code'},1400)};if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(text).then(done).catch(function(){showOnlineError('Copy failed. Select the code and copy it manually.')});else showOnlineError('Select the room code and copy it manually.')};
+  document.getElementById('resignBtn').onclick=function(){if(mode==='online'&&onlineRoom&&onlineRoom.status==='playing')finishOnline((player==='w'?'Black':'White')+' wins by resignation')};document.getElementById('rematchBtn').onclick=rematchOnline;claimWinBtn.onclick=function(){if(mode==='online'&&onlineRoom&&onlineRoom.status!=='finished')finishOnline((player==='w'?'White':'Black')+' wins by disconnect')};
+  flipBtn.onclick=function(){flipped=!flipped;render()};
+  clueBtn.onclick=function(){if(!cluesUnlocked())return;if(!canMoveNow()){showClueText('Clues are available on your turn.');return}var m=bestClueMove();if(!m)return;clueMove=m;showClueText('Clue: try '+notation(state,m,apply(state,m))+', '+sqName(m.from)+' to '+sqName(m.to)+'.');render()};
+  document.getElementById('idleYesBtn').onclick=function(){hideIdlePopup();armIdleTimer()};
+  document.getElementById('idleNoBtn').onclick=idleResign;
+  undoBtn.onclick=function(){if(mode==='online'||aiBusy||!history.length)return;gameVersion++;var count=(mode==='ai'&&state.turn===player)?Math.min(2,history.length):1;while(count--&&history.length){var h=history.pop();state=h.state;stats=h.stats}gameOver=false;gameEndType='';gameResult='';selected=null;legalForSelected=[];clueMove=null;clueText.hidden=true;analysisEl.classList.remove('show');say('start');render();refreshMyPresenceStatus();persistGame();armIdleTimer()};
+  document.getElementById('loginBtn').onclick=function(){openAuth('login')};document.getElementById('profileBtn').onclick=openDashboard;document.getElementById('authUser').onclick=function(){if(isMember())openDashboard()};document.getElementById('dashClose').onclick=closeDashboard;dashModal.onclick=function(e){if(e.target===dashModal)closeDashboard()};document.addEventListener('keydown',function(e){if(e.key==='Escape'&&dashModal.classList.contains('show'))closeDashboard()});document.getElementById('signupBtn').onclick=function(){openAuth('signup')};document.getElementById('authLoginTab').onclick=function(){setAuthMode('login')};document.getElementById('authSignupTab').onclick=function(){setAuthMode('signup')};document.getElementById('authClose').onclick=closeAuth;
+  authModal.onclick=function(e){if(e.target===authModal)closeAuth()};document.addEventListener('keydown',function(e){if(e.key==='Escape'&&authModal.classList.contains('show'))closeAuth()});
+  var authBusy=false;
+  authForm.onsubmit=function(e){e.preventDefault();if(authBusy)return;if(!auth){showAuthError('Account service could not load. Check your connection and try again.');return}var email=document.getElementById('authEmail').value.trim().toLowerCase(),password=document.getElementById('authPassword').value,confirm=document.getElementById('authConfirm').value;document.getElementById('authEmail').value=email;if(!email){showAuthError('Enter your email address.');return}if(password.length<6){showAuthError('Use a password with at least 6 characters.');return}if(authMode==='signup'&&password!==confirm){showAuthError('Passwords do not match.');return}showAuthError('');showAuthNote('');authBusy=true;var submitBtn=document.getElementById('authSubmit');submitBtn.disabled=true;var done=function(){authBusy=false;submitBtn.disabled=false};
+    if(authMode==='signup'){auth.createUserWithEmailAndPassword(email,password).then(function(credential){done();var user=credential&&credential.user;if(user&&user.sendEmailVerification)user.sendEmailVerification().catch(function(){});track('sign_up');showRegistered(email)}).catch(function(error){done();showAuthError(authMessage(error))})}
+    else{auth.signInWithEmailAndPassword(email,password).then(function(){done();track('login');closeAuth()}).catch(function(error){done();showAuthError(authMessage(error))})}};
+  document.getElementById('forgotPassword').onclick=function(){var email=document.getElementById('authEmail').value.trim().toLowerCase();document.getElementById('authEmail').value=email;showAuthNote('');if(!email){showAuthError('Type your email above first, then tap Forgot password again.');document.getElementById('authEmail').focus();return}if(!auth){showAuthError('Account service could not load. Check your connection and try again.');return}showAuthError('');auth.sendPasswordResetEmail(email).then(function(){track('forgot_password_sent');showAuthNote('Password reset email sent, check your inbox.')}).catch(function(error){var code=(error&&error.code)||'';if(code==='auth/user-not-found')showAuthError('No account uses that email. Check the address, or sign up first.');else if(code==='auth/invalid-email')showAuthError('Enter a valid email address.');else showAuthError(authMessage(error))})};
+  document.getElementById('authSuccessBtn').onclick=function(){closeAuth()};
+  document.getElementById('guestBtn').onclick=function(){if(!auth){showAuthError('Guest sign-in could not load. Check your connection and try again.');return}showAuthError('');auth.signInAnonymously().then(function(){closeAuth()}).catch(function(error){showAuthError(authMessage(error))})};
+  var googleBusy=false;
+  document.getElementById('googleBtn').onclick=function(){
+    if(googleBusy)return;
+    if(!auth||!window.firebase||!firebase.auth||!firebase.auth.GoogleAuthProvider){showAuthError('Account service could not load. Check your connection and try again.');return}
+    showAuthError('');showAuthNote('');
+    googleBusy=true;var googleBtn=document.getElementById('googleBtn');googleBtn.disabled=true;
+    var finish=function(){googleBusy=false;googleBtn.disabled=false};
+    var provider=new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider).then(function(){finish();track('login');closeAuth()}).catch(function(error){finish();var code=(error&&error.code)||'';if(code==='auth/popup-closed-by-user')return;if(code==='auth/network-request-failed'){showAuthError('Could not connect. Check your internet connection and try again.');return}showAuthError(authMessage(error))});
+  };
+  document.querySelectorAll('.pw-toggle').forEach(function(btn){btn.onclick=function(){var input=document.getElementById(btn.getAttribute('data-pw'));if(!input)return;var show=input.type==='password';input.type=show?'text':'password';btn.setAttribute('aria-label',show?'Hide password':'Show password');btn.setAttribute('aria-pressed',show?'true':'false');input.focus()}});
+  function showPhoneError(message){var el=document.getElementById('phoneError');el.textContent=message||'';el.classList.toggle('show',!!message)}
+  function showPhoneNote(message){var el=document.getElementById('phoneNote');el.textContent=message||'';el.classList.toggle('show',!!message)}
+  var phoneConfirmation=null,phoneVerifier=null,phoneBusy=false;
+  function resetPhoneVerifier(){if(phoneVerifier){try{phoneVerifier.clear()}catch(clearError){}phoneVerifier=null}}
+  function openPhonePanel(){
+    authForm.style.display='none';document.getElementById('authTabs').style.display='none';document.getElementById('authDivider').style.display='none';document.getElementById('guestBtn').style.display='none';document.getElementById('phoneBtn').style.display='none';document.getElementById('googleBtn').style.display='none';document.getElementById('authSuccess').classList.remove('show');showAuthError('');showAuthNote('');
+    document.getElementById('phonePanel').hidden=false;document.getElementById('phoneStep1').hidden=false;document.getElementById('phoneStep2').hidden=true;showPhoneError('');showPhoneNote('');
+    authTitle.textContent='Sign in with your phone';authIntro.textContent='Enter your number and we will text you a 6 digit code.';
+    window.setTimeout(function(){document.getElementById('phoneNumber').focus()},0);
+  }
+  document.getElementById('phoneBtn').onclick=function(){if(!auth){showAuthError('Account service could not load. Check your connection and try again.');return}openPhonePanel()};
+  document.getElementById('phoneBack').onclick=function(){setAuthMode(authMode)};
+  document.getElementById('phoneSendBtn').onclick=function(){
+    if(phoneBusy)return;showPhoneError('');showPhoneNote('');
+    var cc=document.getElementById('phoneCc').value.replace(/[^0-9+]/g,'');if(cc.charAt(0)!=='+')cc='+'+cc.replace(/\+/g,'');if(cc.length<2){showPhoneError('Enter your country code, for example +1.');return}
+    var digits=document.getElementById('phoneNumber').value.replace(/[^0-9]/g,'');if(digits.length<6){showPhoneError('Enter your phone number so we can text your code.');return}
+    var phone=cc+digits;
+    if(!window.firebase||!firebase.auth||!firebase.auth.RecaptchaVerifier){showPhoneError('Phone sign in could not load. Please sign in with email instead.');return}
+    phoneBusy=true;var sendBtn=document.getElementById('phoneSendBtn');sendBtn.disabled=true;sendBtn.textContent='Sending code...';
+    var finish=function(){phoneBusy=false;sendBtn.disabled=false;sendBtn.textContent='Send code by text'};
+    try{if(!phoneVerifier)phoneVerifier=new firebase.auth.RecaptchaVerifier('recaptchaContainer',{size:'invisible'},auth)}catch(verifierError){finish();showPhoneError('Phone sign in is not available in this view. Please sign in with email instead.');return}
+    auth.signInWithPhoneNumber(phone,phoneVerifier).then(function(confirmation){finish();phoneConfirmation=confirmation;document.getElementById('phoneStep1').hidden=true;document.getElementById('phoneStep2').hidden=false;document.getElementById('phoneCode').value='';showPhoneNote('Code sent to '+phone+'. Enter the 6 digits from the text message.');window.setTimeout(function(){document.getElementById('phoneCode').focus()},0)}).catch(function(error){finish();resetPhoneVerifier();showPhoneError(authMessage(error))});
+  };
+  document.getElementById('phoneVerifyBtn').onclick=function(){
+    if(phoneBusy)return;showPhoneError('');var code=document.getElementById('phoneCode').value.replace(/[^0-9]/g,'');
+    if(!phoneConfirmation){showPhoneError('Send a code first, then enter it here.');return}
+    if(code.length!==6){showPhoneError('Enter the 6 digit code from the text message.');return}
+    phoneBusy=true;var verifyBtn=document.getElementById('phoneVerifyBtn');verifyBtn.disabled=true;verifyBtn.textContent='Checking code...';
+    var finish=function(){phoneBusy=false;verifyBtn.disabled=false;verifyBtn.textContent='Verify and sign in'};
+    phoneConfirmation.confirm(code).then(function(){finish();track('login');closeAuth()}).catch(function(error){finish();showPhoneError(authMessage(error))});
+  };
+  document.getElementById('phoneResendBtn').onclick=function(){resetPhoneVerifier();phoneConfirmation=null;document.getElementById('phoneStep2').hidden=true;document.getElementById('phoneStep1').hidden=false;showPhoneError('');showPhoneNote('Enter your number and tap Send code by text to get a fresh code.')};
+  /* Friends system: friend codes, presence, and challenges. Every read and write is best effort and fails silently so the game keeps working offline or when a write is denied. Only auto-generated Guest names are used, never emails or real names. */
+  var friendsModal=document.getElementById('friendsModal'),friendsOffline=document.getElementById('friendsOffline'),friendsMain=document.getElementById('friendsMain'),friendCodeText=document.getElementById('friendCodeText'),addFriendInput=document.getElementById('addFriendInput'),addFriendMsg=document.getElementById('addFriendMsg'),friendsListEl=document.getElementById('friendsList');
+  var inviteModal=document.getElementById('inviteModal'),inviteText=document.getElementById('inviteText');
+  var myFriendCode=null,friendCodeBusy=false,friendCodeWaiters=[];
+  var friendsRef=null,friendsData={},friendPresenceRefs={},friendPresenceData={},friendsRefreshTimer=null;
+  var myPresenceRef=null,myPresenceStatus='online',myPresenceTimer=null,myPresenceUid=null;
+  var invitesRef=null,currentInvite=null,inviteNote='';
+  function myUid(){if(currentUser)return currentUser.uid;if(auth&&auth.currentUser)return auth.currentUser.uid;return null}
+  function formatFriendCode(code){return code?code.slice(0,3)+'-'+code.slice(3):'------'}
+  function generateFriendCode(){var chars='ABCDEFGHIJKLMNOPQRSTUVWXYZ23456789',out='';for(var i=0;i<6;i++)out+=chars[Math.floor(Math.random()*chars.length)];return out}
+  function ensureFriendCode(done){
+    done=done||function(){};
+    if(myFriendCode){done(myFriendCode);return}
+    friendCodeWaiters.push(done);if(friendCodeBusy)return;
+    var uid=myUid();
+    if(!db||!uid){var early=friendCodeWaiters;friendCodeWaiters=[];early.forEach(function(f){try{f(null)}catch(e){}});return}
+    friendCodeBusy=true;
+    var finish=function(code){friendCodeBusy=false;var ws=friendCodeWaiters;friendCodeWaiters=[];ws.forEach(function(f){try{f(code)}catch(e){}})};
+    try{
+      db.ref('chessUsers/'+uid+'/friendCode').once('value').then(function(snap){
+        var existing=snap.val();
+        if(existing){myFriendCode=String(existing).toUpperCase().replace(/[^A-Z2-9]/g,'');try{var uw=db.ref('chessUsers/'+uid).update({name:onlineName});if(uw&&uw.catch)uw.catch(function(){})}catch(e){}finish(myFriendCode);return}
+        claim(0);
+      }).catch(function(){finish(null)});
+    }catch(e){finish(null)}
+    function claim(attempt){
+      if(attempt>=10){finish(null);return}
+      var code=generateFriendCode(),codeRef;
+      try{codeRef=db.ref('chessFriendCodes/'+code)}catch(e){finish(null);return}
+      try{
+        codeRef.transaction(function(current){if(current===null)return uid;return}).then(function(result){
+          if(result&&result.committed){myFriendCode=code;try{var w=db.ref('chessUsers/'+uid).update({friendCode:code,name:onlineName});if(w&&w.catch)w.catch(function(){})}catch(e){}finish(code)}
+          else claim(attempt+1);
+        }).catch(function(){claim(attempt+1)});
+      }catch(e){claim(attempt+1)}
+    }
+  }
+  function showAddFriendMsg(text){addFriendMsg.textContent=text||'';addFriendMsg.classList.toggle('show',!!text)}
+  function backfillFriendName(uid,fuid,done){
+    /* Presence is friends-only readable, so a new friend's name can only be read after the friendship entry exists. Best effort: any failure leaves the stored name empty. */
+    var finish=function(n){try{done(n||'')}catch(e){}};
+    try{
+      db.ref('chessPresence/'+fuid).once('value').then(function(psnap){
+        var p=psnap.val();
+        if(p&&p.name){var nm=String(p.name);try{var u=db.ref('chessFriends/'+uid+'/'+fuid).update({name:nm});if(u&&u.catch)u.catch(function(){})}catch(e){}finish(nm)}
+        else finish('');
+      }).catch(function(){finish('')});
+    }catch(e){finish('')}
+  }
+  function addFriend(){
+    showAddFriendMsg('');
+    if(!db||!myUid()){showAddFriendMsg("Couldn't connect. Friends need a connection.");return}
+    var code=String(addFriendInput.value||'').toUpperCase().replace(/[-\s]/g,'');
+    if(!/^[A-Z2-9]{6}$/.test(code)){showAddFriendMsg("That code doesn't look right. Codes look like ABC-123.");return}
+    ensureFriendCode(function(myCode){
+      if(myCode&&code===myCode){showAddFriendMsg("That's your own code. Share it with a friend instead.");return}
+      var uid=myUid();if(!uid)return;
+      try{
+        db.ref('chessFriendCodes/'+code).once('value').then(function(snap){
+          var fuid=snap.val();
+          if(!fuid){showAddFriendMsg('No player found with that code. Check the code and try again.');return}
+          if(fuid===uid){showAddFriendMsg("That's your own code. Share it with a friend instead.");return}
+          try{
+            db.ref('chessFriends/'+uid+'/'+fuid).once('value').then(function(fsnap){
+              if(fsnap.exists()){var fd=fsnap.val()||{};showAddFriendMsg((fd.name||'That player')+' is already in your friends list.');return}
+              try{
+                var w=db.ref('chessFriends/'+uid+'/'+fuid).set({code:code,name:'',addedAt:firebase.database.ServerValue.TIMESTAMP});
+                var doneAdd=function(){track('friend_added');addFriendInput.value='';showAddFriendMsg('Friend added to your friends list.');renderFriendsList();backfillFriendName(uid,fuid,function(nm){if(nm)showAddFriendMsg(nm+' added to your friends list.')})};
+                if(w&&w.then)w.then(doneAdd,function(){showAddFriendMsg("Couldn't connect. Friends need a connection.")});else doneAdd();
+              }catch(e){showAddFriendMsg("Couldn't connect. Friends need a connection.")}
+            }).catch(function(){showAddFriendMsg("Couldn't connect. Friends need a connection.")});
+          }catch(e){showAddFriendMsg("Couldn't connect. Friends need a connection.")}
+        }).catch(function(){showAddFriendMsg("Couldn't connect. Friends need a connection.")});
+      }catch(e){showAddFriendMsg("Couldn't connect. Friends need a connection.")}
+    });
+  }
+  function computeMyPresenceStatus(){
+    if(mode==='online')return (onlineRoom&&onlineRoom.status==='playing')?'in-game':'online';
+    return (history.length>0&&!gameOver)?'in-game':'online';
+  }
+  function writeMyPresence(){
+    if(!myPresenceRef)return;
+    try{var w=myPresenceRef.set({name:onlineName,status:myPresenceStatus,ts:firebase.database.ServerValue.TIMESTAMP});if(w&&w.catch)w.catch(function(){})}catch(e){}
+  }
+  function refreshMyPresenceStatus(){
+    if(!myPresenceRef)return;var s=computeMyPresenceStatus();if(s===myPresenceStatus)return;myPresenceStatus=s;writeMyPresence();
+  }
+  function startMyPresence(){
+    var uid=myUid();if(!db||!uid)return;
+    if(myPresenceRef&&myPresenceUid===uid)return;
+    stopMyPresence();
+    myPresenceUid=uid;myPresenceStatus=computeMyPresenceStatus();
+    try{myPresenceRef=db.ref('chessPresence/'+uid);myPresenceRef.onDisconnect().remove()}catch(e){myPresenceRef=null;myPresenceUid=null;return}
+    writeMyPresence();
+    myPresenceTimer=window.setInterval(function(){myPresenceStatus=computeMyPresenceStatus();writeMyPresence()},60000);
+  }
+  function stopMyPresence(){
+    if(myPresenceTimer){window.clearInterval(myPresenceTimer);myPresenceTimer=null}
+    if(myPresenceRef){try{myPresenceRef.onDisconnect().cancel()}catch(e){}try{var w=myPresenceRef.remove();if(w&&w.catch)w.catch(function(){})}catch(e){}myPresenceRef=null;myPresenceUid=null}
+  }
+  function startFriendsListener(){
+    var uid=myUid();if(!db||!uid||friendsRef)return;
+    try{
+      friendsRef=db.ref('chessFriends/'+uid);
+      friendsRef.on('value',function(snap){friendsData=snap.val()||{};syncFriendPresenceListeners();renderFriendsList()},function(){});
+    }catch(e){friendsRef=null}
+  }
+  function stopFriendsListener(){
+    if(friendsRef){try{friendsRef.off()}catch(e){}friendsRef=null}
+    Object.keys(friendPresenceRefs).forEach(function(u){try{friendPresenceRefs[u].off()}catch(e){}});friendPresenceRefs={};friendPresenceData={};friendsData={};
+  }
+  function syncFriendPresenceListeners(){
+    if(!db)return;
+    Object.keys(friendPresenceRefs).forEach(function(u){if(!friendsData[u]){try{friendPresenceRefs[u].off()}catch(e){}delete friendPresenceRefs[u];delete friendPresenceData[u]}});
+    Object.keys(friendsData).forEach(function(u){
+      if(friendPresenceRefs[u])return;
+      try{var r=db.ref('chessPresence/'+u);friendPresenceRefs[u]=r;r.on('value',function(snap){friendPresenceData[u]=snap.val();renderFriendsList()},function(){})}catch(e){}
+    });
+  }
+  function friendStatusOf(fuid){
+    var p=friendPresenceData[fuid];if(!p||!p.ts)return 'offline';
+    if(Date.now()-Number(p.ts)>150000)return 'offline';
+    return p.status==='in-game'?'in-game':'online';
+  }
+  function friendDisplayName(fuid){
+    var f=friendsData[fuid]||{},p=friendPresenceData[fuid];
+    if(p&&p.name)return String(p.name);
+    if(f.name)return String(f.name);
+    return 'Friend '+(f.code||'');
+  }
+  function renderFriendsList(){
+    if(!friendsListEl)return;
+    var uids=Object.keys(friendsData||{});
+    friendsListEl.innerHTML='';
+    if(!uids.length){var empty=document.createElement('div');empty.className='friends-empty';empty.textContent='No friends yet. Share your code to get started.';friendsListEl.appendChild(empty);return}
+    uids.sort(function(a,b){return friendDisplayName(a).localeCompare(friendDisplayName(b))});
+    uids.forEach(function(fuid){
+      var f=friendsData[fuid]||{},status=friendStatusOf(fuid),displayName=friendDisplayName(fuid);
+      var row=document.createElement('div');row.className='friend-row';
+      var dot=document.createElement('span');dot.className='friend-dot '+status;row.appendChild(dot);
+      var nm=document.createElement('span');nm.className='friend-name';nm.textContent=displayName;row.appendChild(nm);
+      var st=document.createElement('span');st.className='friend-status';st.textContent=status==='online'?'Online':(status==='in-game'?'In a game':'Offline');row.appendChild(st);
+      if(status==='online'){var btn=document.createElement('button');btn.type='button';btn.className='online-action';btn.textContent='Challenge';(function(uid2,name2){btn.onclick=function(){challengeFriend(uid2,name2)}})(fuid,displayName);row.appendChild(btn)}
+      friendsListEl.appendChild(row);
+    });
+  }
+  function challengeFriend(fuid,fname){
+    if(!db||!myUid())return;
+    closeFriendsPanel();
+    if(roomRef)leaveOnline('ai');
+    if(mode!=='online')enterOnlineMode();
+    createRoom(function(code){
+      var uid=myUid();if(!uid)return;
+      try{var w=db.ref('chessInvites/'+fuid).push({fromUid:uid,fromName:onlineName,roomCode:code,ts:firebase.database.ServerValue.TIMESTAMP});if(w&&w.catch)w.catch(function(){})}catch(e){}
+      inviteNote='Invite sent to '+fname+'.';try{roomMeta.textContent=inviteNote}catch(e){}
+      track('challenge_sent');
+    });
+  }
+  function startInviteListener(){
+    var uid=myUid();if(!db||!uid||invitesRef)return;
+    try{
+      invitesRef=db.ref('chessInvites/'+uid);
+      invitesRef.on('child_added',function(snap){handleInvite(snap)},function(){});
+    }catch(e){invitesRef=null}
+  }
+  function stopInviteListener(){
+    if(invitesRef){try{invitesRef.off()}catch(e){}invitesRef=null}
+    currentInvite=null;inviteModal.classList.remove('show');
+  }
+  function removeInvite(key){
+    if(!invitesRef||!key)return;
+    try{var w=invitesRef.child(key).remove();if(w&&w.catch)w.catch(function(){})}catch(e){}
+  }
+  function handleInvite(snap){
+    try{
+      var invite=snap.val(),key=snap.key,uid=myUid();
+      if(!invite||!invite.roomCode||!invite.fromUid||!invite.ts){removeInvite(key);return}
+      if(invite.fromUid===uid){removeInvite(key);return}
+      if(Date.now()-Number(invite.ts)>120000){removeInvite(key);return}
+      if(gameInProgress()||(mode==='online'&&onlineRoom&&onlineRoom.status==='playing')){removeInvite(key);return}
+      if(currentInvite){removeInvite(key);return}
+      currentInvite={invite:invite,key:key};
+      inviteText.textContent=(invite.fromName||'A player')+' challenged you to a game.';
+      inviteModal.classList.add('show');
+    }catch(e){}
+  }
+  document.getElementById('inviteAcceptBtn').onclick=function(){
+    if(!currentInvite)return;
+    var inv=currentInvite.invite,key=currentInvite.key;currentInvite=null;inviteModal.classList.remove('show');removeInvite(key);track('challenge_accepted');
+    if(mode!=='online')enterOnlineMode();
+    joinRoomWithCode(inv.roomCode);
+  };
+  document.getElementById('inviteDeclineBtn').onclick=function(){
+    if(!currentInvite)return;
+    var key=currentInvite.key;currentInvite=null;inviteModal.classList.remove('show');removeInvite(key);
+  };
+  function openFriendsPanel(){
+    friendsModal.classList.add('show');showAddFriendMsg('');
+    if(!db){friendsOffline.hidden=false;friendsMain.hidden=true;return}
+    friendsOffline.hidden=true;friendsMain.hidden=false;
+    friendCodeText.textContent=myFriendCode?formatFriendCode(myFriendCode):'------';
+    var proceed=function(){
+      if(!myUid()){friendsOffline.hidden=false;friendsMain.hidden=true;return}
+      friendsOffline.hidden=true;friendsMain.hidden=false;
+      ensureFriendCode(function(code){friendCodeText.textContent=code?formatFriendCode(code):'Unavailable'});
+      startFriendsListener();renderFriendsList();
+    };
+    if(!myUid()&&auth){try{auth.signInAnonymously().then(function(){proceed()},function(){proceed()})}catch(e){proceed()}}
+    else proceed();
+    if(!friendsRefreshTimer)friendsRefreshTimer=window.setInterval(function(){if(friendsModal.classList.contains('show'))renderFriendsList()},30000);
+  }
+  function closeFriendsPanel(){friendsModal.classList.remove('show')}
+  document.getElementById('friendsBtn').onclick=openFriendsPanel;
+  document.getElementById('friendsClose').onclick=closeFriendsPanel;
+  friendsModal.onclick=function(e){if(e.target===friendsModal)closeFriendsPanel()};
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&friendsModal.classList.contains('show'))closeFriendsPanel()});
+  document.getElementById('copyFriendCodeBtn').onclick=function(){
+    if(!myFriendCode)return;var btn=this,text=formatFriendCode(myFriendCode);
+    var done=function(){btn.textContent='Copied';window.setTimeout(function(){btn.textContent='Copy'},1400)};
+    if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(text).then(done).catch(function(){});
+  };
+  document.getElementById('addFriendBtn').onclick=addFriend;
+  addFriendInput.onkeydown=function(e){if(e.key==='Enter')addFriend()};
+  function onFriendsAuth(user){
+    if(user){startMyPresence();startFriendsListener();startInviteListener()}
+    else{stopMyPresence();stopFriendsListener();stopInviteListener();myFriendCode=null;friendsData={};renderFriendsList()}
+  }
+  document.getElementById('logoutBtn').onclick=function(){if(auth)auth.signOut().catch(function(){})};
+  if(auth)auth.onAuthStateChanged(function(user){currentUser=user||null;updateAuthUI();refreshClueAccess();onFriendsAuth(user)});
+  updateClueUI();
+  var bootSaved=readSavedGame();
+  newGame('w','ai');
+  if(bootSaved){try{localStorage.setItem(SAVE_KEY,bootSaved.raw)}catch(restoreError){}showResumePrompt(bootSaved.data)}
+})();
+</script>
+</body>
+</html>
