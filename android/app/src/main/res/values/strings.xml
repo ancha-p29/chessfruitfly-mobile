@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Chess vs FruityFly</string>
+    <string name="title_activity_main">Chess vs FruityFly</string>
+    <string name="package_name">com.chessfruitfly.game</string>
+    <string name="custom_url_scheme">com.chessfruitfly.game</string>
+</resources>
