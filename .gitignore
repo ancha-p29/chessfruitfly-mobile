@@ -1,0 +1,12 @@
+node_modules/
+android/keystore.properties
+keystore/.store-pass
+android/app/build/
+android/build/
+android/.gradle/
+ios/App/Pods/
+android/local.properties
+ios-signing/
+keystore/
+screenshots/
+__pycache__/
