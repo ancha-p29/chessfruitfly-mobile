@@ -124,3 +124,15 @@ jobs:
         with:
           name: ios-ipa
           path: ${{ runner.temp }}/ipa/*.ipa
+
+      - name: Upload to App Store Connect
+        env:
+          API_KEY_ID: ${{ secrets.ASC_API_KEY_ID }}
+          API_ISSUER_ID: ${{ secrets.ASC_API_ISSUER_ID }}
+          API_KEY_B64: ${{ secrets.ASC_API_PRIVATE_KEY_B64 }}
+        run: |
+          mkdir -p "$HOME/.appstoreconnect/private_keys"
+          printf '%s' "$API_KEY_B64" | base64 --decode > "$HOME/.appstoreconnect/private_keys/AuthKey_$API_KEY_ID.p8"
+          IPA_PATH=$(ls "$RUNNER_TEMP"/ipa/*.ipa | head -1)
+          echo "Uploading $IPA_PATH"
+          xcrun altool --upload-app --type ios --file "$IPA_PATH" --apiKey "$API_KEY_ID" --apiIssuer "$API_ISSUER_ID"
