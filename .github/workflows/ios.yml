@@ -63,8 +63,10 @@ jobs:
         env:
           PROVISION_B64: ${{ secrets.IOS_PROVISION_PROFILE_B64 }}
         run: |
-          mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
-          echo -n "$PROVISION_B64" | base64 --decode > "$HOME/Library/MobileDevice/Provisioning Profiles/chessfruitfly.mobileprovision"
+          PROFILE_UUID="aec4d81b-ced0-4a6f-900a-1f7da009d5f6"
+          mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles" "$HOME/Library/Developer/Xcode/UserData/Provisioning Profiles"
+          echo -n "$PROVISION_B64" | base64 --decode > "$HOME/Library/MobileDevice/Provisioning Profiles/$PROFILE_UUID.mobileprovision"
+          cp "$HOME/Library/MobileDevice/Provisioning Profiles/$PROFILE_UUID.mobileprovision" "$HOME/Library/Developer/Xcode/UserData/Provisioning Profiles/$PROFILE_UUID.mobileprovision"
 
       - name: Build archive
         run: |
@@ -78,6 +80,7 @@ jobs:
             DEVELOPMENT_TEAM=8YW4SAV57H \
             CODE_SIGN_IDENTITY="Apple Distribution" \
             PROVISIONING_PROFILE_SPECIFIER="Chess vs FruityFly App Store" \
+            PROVISIONING_PROFILE=aec4d81b-ced0-4a6f-900a-1f7da009d5f6 \
             archive
 
       - name: Export IPA
