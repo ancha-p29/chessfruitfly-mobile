@@ -61,13 +61,17 @@ jobs:
 
       - name: Install provisioning profile
         env:
-          PROVISION_B64: ${{ secrets.IOS_PROVISION_PROFILE_B64 }}
+          PROFILE_P1: ${{ secrets.IOS_PROVISION_PROFILE_B64_P1 }}
+          PROFILE_P2: ${{ secrets.IOS_PROVISION_PROFILE_B64_P2 }}
+          PROFILE_P3: ${{ secrets.IOS_PROVISION_PROFILE_B64_P3 }}
+          PROFILE_P4: ${{ secrets.IOS_PROVISION_PROFILE_B64_P4 }}
         run: |
           PROFILE_UUID="aec4d81b-ced0-4a6f-900a-1f7da009d5f6"
           mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles" "$HOME/Library/Developer/Xcode/UserData/Provisioning Profiles"
-          echo -n "$PROVISION_B64" | base64 --decode > "$HOME/Library/MobileDevice/Provisioning Profiles/$PROFILE_UUID.mobileprovision"
+          PROVISION_B64="${PROFILE_P1}${PROFILE_P2}${PROFILE_P3}${PROFILE_P4}"
+          printf '%s' "$PROVISION_B64" | base64 --decode > "$HOME/Library/MobileDevice/Provisioning Profiles/$PROFILE_UUID.mobileprovision"
           cp "$HOME/Library/MobileDevice/Provisioning Profiles/$PROFILE_UUID.mobileprovision" "$HOME/Library/Developer/Xcode/UserData/Provisioning Profiles/$PROFILE_UUID.mobileprovision"
-          echo "DIAG secret char count: ${#PROVISION_B64}"
+          echo "DIAG part lengths: ${#PROFILE_P1} ${#PROFILE_P2} ${#PROFILE_P3} ${#PROFILE_P4} total: ${#PROVISION_B64}"
           ls -l "$HOME/Library/MobileDevice/Provisioning Profiles/$PROFILE_UUID.mobileprovision"
           md5 "$HOME/Library/MobileDevice/Provisioning Profiles/$PROFILE_UUID.mobileprovision" || true
           security cms -D -i "$HOME/Library/MobileDevice/Provisioning Profiles/$PROFILE_UUID.mobileprovision" | grep -A1 UUID || echo "DIAG PROFILE PARSE FAILED"
